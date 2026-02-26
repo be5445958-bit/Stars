@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StarsGuide ✦ O Cosmos Dentro de Você</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #04010f;
+  --deep: #080318;
+  --mid: #110830;
+  --gold: #c8a96e;
+  --gold2: #e8d5a3;
+  --dim: #6b5f4a;
+  --text: #ede6d6;
+  --soft: #b8ad9e;
+  --accent: #7c4dce;
+  --rose: #d4859a;
+  --teal: #4db8c8;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);font-family:'Cormorant Garamond',serif}
+#app{height:100%;display:flex;flex-direction:column;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+
+/* STARS BG */
+#stars-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at 50% 40%,#1a0840 0%,#080318 40%,#04010f 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:40px}
+.sigil-wrap{animation:spin 30s linear infinite,glow-pulse 4s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glow-pulse{0%,100%{filter:drop-shadow(0 0 8px #c8a96e55)}50%{filter:drop-shadow(0 0 24px #c8a96eaa)}}
+.splash-title{font-family:'Josefin Sans',sans-serif;font-weight:100;font-size:clamp(2rem,8vw,3.5rem);letter-spacing:.4em;text-transform:uppercase;background:linear-gradient(135deg,#c8a96e,#e8d5a3,#c8a96e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp .8s ease both}
+.splash-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(.9rem,3vw,1.2rem);color:var(--soft);letter-spacing:.2em;animation:fadeUp .8s .2s ease both}
+.btn-cosmic{background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Josefin Sans',sans-serif;font-weight:300;letter-spacing:.3em;font-size:.8rem;text-transform:uppercase;padding:14px 40px;cursor:pointer;transition:all .3s;border-radius:0;animation:fadeUp .8s .4s ease both}
+.btn-cosmic:hover{background:rgba(200,169,110,.1);box-shadow:0 0 20px rgba(200,169,110,.2)}
+.btn-cosmic:active{transform:scale(.98);background:rgba(200,169,110,.12)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ONBOARDING */
+#onboarding{position:fixed;inset:0;z-index:90;background:var(--deep);display:none;flex-direction:column;overflow-y:auto;padding:40px 24px 60px}
+#onboarding.active{display:flex}
+.ob-title{font-family:'Josefin Sans',sans-serif;font-weight:100;font-size:clamp(1.4rem,5vw,2rem);letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;animation:fadeUp .6s ease both}
+.ob-sub{font-style:italic;color:var(--soft);font-size:1rem;margin-bottom:32px;animation:fadeUp .6s .1s ease both}
+.field-group{margin-bottom:20px;animation:fadeUp .6s ease both}
+.field-label{font-family:'Josefin Sans',sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:block}
+input[type=text],input[type=date],input[type=time],select{width:100%;background:var(--mid);border:1px solid rgba(200,169,110,.2);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1.05rem;padding:14px 16px;border-radius:0;appearance:none;-webkit-appearance:none;outline:none;transition:border-color .3s}
+input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,select:focus{border-color:var(--gold)}
+input::placeholder{color:var(--dim)}
+select option{background:var(--mid)}
+.link-sm{color:var(--accent);font-size:.85rem;cursor:pointer;margin-top:8px;display:inline-block;text-decoration:underline;opacity:.8}
+.link-sm:hover{opacity:1}
+.ob-btn{margin-top:32px;width:100%;padding:18px;background:linear-gradient(135deg,rgba(124,77,206,.3),rgba(200,169,110,.2));border:1px solid var(--gold);color:var(--gold);font-family:'Josefin Sans',sans-serif;letter-spacing:.3em;font-size:.85rem;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.ob-btn:hover{background:linear-gradient(135deg,rgba(124,77,206,.5),rgba(200,169,110,.3))}
+.ob-err{color:var(--rose);font-size:.85rem;margin-top:8px;display:none}
+
+/* MAIN APP */
+#main-app{position:fixed;inset:0;z-index:80;display:none;flex-direction:column;background:var(--ink)}
+#main-app.active{display:flex}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--deep);border-bottom:1px solid rgba(200,169,110,.1);flex-shrink:0}
+.top-logo{font-family:'Josefin Sans',sans-serif;font-weight:100;font-size:.9rem;letter-spacing:.3em;color:var(--gold)}
+.top-name{font-style:italic;color:var(--soft);font-size:.9rem}
+.pages-wrap{flex:1;overflow:hidden;position:relative}
+.page{display:none;height:100%;overflow-y:auto;padding:20px 16px 20px;animation:pgIn .4s ease both}
+.page.active{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.bottom-nav{display:flex;background:var(--deep);border-top:1px solid rgba(200,169,110,.1);flex-shrink:0}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 2px;cursor:pointer;background:none;border:none;color:var(--dim);transition:color .3s;font-size:.5rem;font-family:'Josefin Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.nav-btn .nav-ico{font-size:1.2rem}
+.nav-btn.active{color:var(--gold)}
+.nav-btn:hover{color:var(--soft)}
+
+/* CARDS */
+.card{background:var(--mid);border:1px solid rgba(200,169,110,.12);padding:16px;margin-bottom:12px;border-radius:2px;cursor:pointer;transition:border-color .3s}
+.card:hover{border-color:rgba(200,169,110,.3)}
+.card-title{font-family:'Josefin Sans',sans-serif;font-weight:300;font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.card-text{font-style:italic;color:var(--soft);font-size:.95rem;line-height:1.7}
+.planet-row{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--mid);border:1px solid rgba(200,169,110,.1);margin-bottom:8px;cursor:pointer;transition:all .3s}
+.planet-row:hover{border-color:rgba(200,169,110,.3);transform:translateX(4px)}
+.planet-sym{font-size:1.4rem;width:36px;text-align:center}
+.planet-name{font-family:'Josefin Sans',sans-serif;font-weight:300;letter-spacing:.15em;font-size:.8rem;text-transform:uppercase;color:var(--gold2);flex:1}
+.planet-pos{color:var(--soft);font-style:italic;font-size:.9rem}
+.badge{background:rgba(212,133,154,.2);border:1px solid var(--rose);color:var(--rose);font-size:.6rem;font-family:'Josefin Sans',sans-serif;letter-spacing:.1em;padding:2px 8px;margin-left:8px}
+
+/* TRIO CARDS */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.trio-card{background:var(--mid);border:1px solid rgba(200,169,110,.15);padding:14px 10px;text-align:center}
+.trio-sym{font-size:1.6rem;margin-bottom:4px}
+.trio-planet{font-family:'Josefin Sans',sans-serif;font-weight:100;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.trio-sign{color:var(--gold2);font-style:italic;font-size:.9rem}
+
+/* CANVAS */
+#mandala-wrap{display:flex;justify-content:center;margin-bottom:20px}
+#mc{display:block}
+
+/* STELLIUM BANNER */
+.stellium-banner{background:linear-gradient(135deg,rgba(124,77,206,.2),rgba(200,169,110,.1));border:1px solid var(--accent);padding:14px 16px;margin-bottom:16px}
+.stellium-banner h3{font-family:'Josefin Sans',sans-serif;font-weight:300;letter-spacing:.2em;font-size:.8rem;color:var(--accent);text-transform:uppercase;margin-bottom:6px}
+.stellium-banner p{color:var(--soft);font-style:italic;font-size:.9rem}
+
+/* PAGE TITLES */
+.page-title{font-family:'Josefin Sans',sans-serif;font-weight:100;font-size:clamp(1.2rem,4vw,1.6rem);letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.page-sub{font-style:italic;color:var(--dim);font-size:.9rem;margin-bottom:20px}
+
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 200px);min-height:300px}
+.chat-msgs{flex:1;overflow-y:auto;padding-bottom:16px}
+.chat-msg{margin-bottom:16px;animation:fadeUp .4s ease both}
+.msg-user{text-align:right}.msg-user .bubble{background:rgba(124,77,206,.2);border:1px solid rgba(124,77,206,.3);display:inline-block;padding:10px 14px;max-width:80%;font-style:italic;color:var(--text);font-size:.9rem;border-radius:16px 16px 4px 16px}
+.msg-ai .bubble{background:var(--mid);border:1px solid rgba(200,169,110,.2);display:inline-block;padding:12px 16px;max-width:90%;color:var(--soft);font-style:italic;font-size:.9rem;line-height:1.6;border-radius:16px 16px 16px 4px}
+.chat-input-row{display:flex;gap:8px;padding-top:12px;border-top:1px solid rgba(200,169,110,.1)}
+.chat-input{flex:1;background:var(--mid);border:1px solid rgba(200,169,110,.2);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1rem;padding:12px 14px;outline:none;border-radius:0}
+.chat-send{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:12px 20px;cursor:pointer;font-family:'Josefin Sans',sans-serif;font-size:.7rem;letter-spacing:.2em;transition:all .3s}
+.chat-send:hover{background:rgba(200,169,110,.1)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{background:var(--mid);border:1px solid rgba(200,169,110,.2);color:var(--soft);font-size:.8rem;font-style:italic;padding:6px 12px;cursor:pointer;border-radius:20px;transition:all .3s}
+.chip:hover{border-color:var(--gold);color:var(--gold2)}
+
+/* TRANSITS */
+.moon-card{background:linear-gradient(135deg,var(--mid),rgba(77,184,200,.1));border:1px solid rgba(77,184,200,.2);padding:20px;text-align:center;margin-bottom:20px}
+.moon-phase-big{font-size:4rem;margin-bottom:8px}
+.moon-name{font-family:'Josefin Sans',sans-serif;font-weight:300;letter-spacing:.2em;font-size:.9rem;color:var(--teal);text-transform:uppercase}
+.moon-detail{color:var(--soft);font-style:italic;font-size:.95rem;margin-top:6px}
+.transit-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--mid);border:1px solid rgba(200,169,110,.08);margin-bottom:6px}
+.transit-left{color:var(--gold2);font-size:.9rem}
+.transit-right{color:var(--soft);font-style:italic;font-size:.85rem}
+
+/* SINASTRIA */
+.compat-bar-wrap{margin:16px 0}
+.compat-label{font-family:'Josefin Sans',sans-serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.compat-bar{height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.compat-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width 1s ease}
+.compat-pct{font-family:'Josefin Sans',sans-serif;font-size:1.2rem;color:var(--gold);float:right;margin-top:-24px}
+
+/* EXTRAS */
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.extra-card{background:var(--mid);border:1px solid rgba(200,169,110,.1);padding:20px 14px;text-align:center;cursor:pointer;transition:all .3s}
+.extra-card:hover{border-color:rgba(200,169,110,.3);transform:translateY(-2px)}
+.extra-ico{font-size:2rem;margin-bottom:8px}
+.extra-name{font-family:'Josefin Sans',sans-serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.extra-desc{color:var(--dim);font-size:.78rem;font-style:italic}
+
+/* SOUL JOURNEY */
+.karma-timeline{position:relative;padding-left:24px}
+.karma-timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--accent),var(--gold),transparent)}
+.karma-step{position:relative;margin-bottom:24px}
+.karma-step::before{content:'✦';position:absolute;left:-24px;color:var(--gold);font-size:.6rem;top:4px}
+.karma-step h4{font-family:'Josefin Sans',sans-serif;font-weight:300;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);margin-bottom:4px}
+.karma-step p{color:var(--soft);font-style:italic;font-size:.9rem;line-height:1.6}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;align-items:flex-end}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--deep);border-radius:24px 24px 0 0;padding:28px 20px 40px;max-height:80vh;overflow-y:auto;width:100%;border-top:1px solid rgba(200,169,110,.2)}
+.modal-title{font-family:'Josefin Sans',sans-serif;font-weight:300;font-size:1rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.modal-sub{color:var(--soft);font-style:italic;font-size:.9rem;margin-bottom:16px}
+.modal-text{color:var(--text);font-style:italic;line-height:1.8;font-size:.95rem}
+.modal-close{float:right;background:none;border:none;color:var(--dim);cursor:pointer;font-size:1.2rem}
+.modal-badge{display:inline-block;background:rgba(200,169,110,.1);border:1px solid rgba(200,169,110,.3);color:var(--gold2);font-size:.65rem;font-family:'Josefin Sans',sans-serif;letter-spacing:.15em;padding:3px 10px;margin-right:6px;margin-bottom:12px}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-family:'Josefin Sans',sans-serif;font-size:.75rem;letter-spacing:.2em;padding:10px 24px;border-radius:20px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* LOADING */
+.loading-overlay{display:none;position:fixed;inset:0;z-index:150;background:rgba(4,1,15,.9);align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-overlay.show{display:flex}
+.spinner{width:48px;height:48px;border:1px solid rgba(200,169,110,.2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+.loading-text{font-family:'Josefin Sans',sans-serif;font-weight:100;letter-spacing:.3em;font-size:.8rem;color:var(--gold);text-transform:uppercase}
+
+/* SECTION HEADER */
+.sect-hdr{display:flex;align-items:center;gap:10px;margin:20px 0 12px}
+.sect-hdr::after{content:'';flex:1;height:1px;background:rgba(200,169,110,.15)}
+.sect-hdr span{font-family:'Josefin Sans',sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim)}
+
+/* ASPECT */
+.aspect-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--mid);border-left:2px solid transparent;margin-bottom:6px;font-size:.88rem}
+.aspect-row.harmonious{border-left-color:#a0b8a0}
+.aspect-row.tense{border-left-color:#b07070}
+.aspect-row.neutral{border-left-color:var(--gold)}
+
+/* COMPATIBILITY RESULT */
+.compat-score-big{text-align:center;padding:24px;font-family:'Josefin Sans',sans-serif}
+.compat-score-big .score-num{font-size:4rem;font-weight:100;color:var(--gold)}
+.compat-score-big .score-label{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+</style>
+</head>
+<body>
+<canvas id="stars-canvas"></canvas>
+<div id="app">
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sigil-wrap">
+    <svg width="140" height="140" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="90" stroke="#c8a96e" stroke-width=".5" opacity=".8"/>
+      <circle cx="100" cy="100" r="70" stroke="#c8a96e" stroke-width=".3" opacity=".5"/>
+      <circle cx="100" cy="100" r="45" stroke="#c8a96e" stroke-width=".3" opacity=".3"/>
+      <polygon points="100,10 118,65 175,65 129,100 147,155 100,120 53,155 71,100 25,65 82,65" fill="none" stroke="#c8a96e" stroke-width=".6" opacity=".6"/>
+      <circle cx="100" cy="100" r="6" fill="#c8a96e" opacity=".8"/>
+      <line x1="100" y1="5" x2="100" y2="195" stroke="#c8a96e" stroke-width=".2" opacity=".2"/>
+      <line x1="5" y1="100" x2="195" y2="100" stroke="#c8a96e" stroke-width=".2" opacity=".2"/>
+      <line x1="29" y1="29" x2="171" y2="171" stroke="#c8a96e" stroke-width=".2" opacity=".2"/>
+      <line x1="171" y1="29" x2="29" y2="171" stroke="#c8a96e" stroke-width=".2" opacity=".2"/>
+      <text x="100" y="104" text-anchor="middle" fill="#c8a96e" font-size="14" opacity=".9">✦</text>
+    </svg>
+  </div>
+  <div class="splash-title">StarsGuide</div>
+  <div class="splash-sub">o cosmos dentro de você</div>
+  <button class="btn-cosmic" onclick="goTo('onboarding')">✦ INICIAR JORNADA</button>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-title">Seu Mapa Astral</div>
+  <div class="ob-sub">Preencha com seus dados de nascimento para revelar o cosmos que existe em você</div>
+  <div class="field-group" style="animation-delay:.05s">
+    <label class="field-label">✦ Seu Nome</label>
+    <input type="text" id="ob-name" placeholder="Como você se chama?">
+  </div>
+  <div class="field-group" style="animation-delay:.1s">
+    <label class="field-label">✦ Data de Nascimento</label>
+    <input type="date" id="ob-date">
+  </div>
+  <div class="field-group" style="animation-delay:.15s">
+    <label class="field-label">✦ Hora de Nascimento</label>
+    <input type="time" id="ob-time">
+    <span class="link-sm" onclick="document.getElementById('ob-time').value=''">Não sei minha hora de nascimento</span>
+  </div>
+  <div class="field-group" style="animation-delay:.2s">
+  <div class="field-group" style="animation-delay:.2s">
+    <label class="field-label">✦ Cidade de Nascimento</label>
+    <div style="position:relative">
+      <input type="text" id="ob-city-input" placeholder="Ex: São Paulo, Lisboa, Buenos Aires..." autocomplete="off"
+        oninput="filterCities('ob')" onfocus="showDrop('ob')" onblur="setTimeout(()=>hideDrop('ob'),200)"
+        style="width:100%;background:var(--mid);border:1px solid rgba(200,169,110,.2);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1.05rem;padding:14px 16px;outline:none;transition:border-color .3s">
+      <div id="ob-drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:#110830;border:1px solid rgba(200,169,110,.3);border-top:none;max-height:220px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.6)"></div>
+    </div>
+    <input type="hidden" id="ob-country" value="-23.55,-46.63">
+    <div id="ob-city-label" style="color:var(--gold);font-style:italic;font-size:.82rem;margin-top:6px;min-height:18px">✦ São Paulo, SP — Brasil</div>
+  </div>
+  </div>
+  <div class="ob-err" id="ob-err">⚠ Por favor, preencha seu nome e data de nascimento</div>
+  <button class="ob-btn" onclick="buildChart()">✦ REVELAR MEU MAPA</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app">
+  <div class="top-bar">
+    <div class="top-logo">✦ STARSGUIDE</div>
+    <div class="top-name" id="top-name-display"></div>
+  </div>
+  <div class="pages-wrap">
+    <!-- PAGE 1: MANDALA -->
+    <div class="page active" id="page-0">
+      <div id="mandala-wrap"><canvas id="mc"></canvas></div>
+      <div class="trio" id="trio-cards"></div>
+      <div id="stellium-area"></div>
+      <div class="sect-hdr"><span>Aspectos Principais</span></div>
+      <div id="aspects-preview"></div>
+    </div>
+    <!-- PAGE 2: MAPA DETALHADO -->
+    <div class="page" id="page-1">
+      <div class="page-title">Mapa Detalhado</div>
+      <div class="page-sub">Cada planeta conta sua história</div>
+      <div id="planets-list"></div>
+    </div>
+    <!-- PAGE 3: JORNADA DA ALMA -->
+    <div class="page" id="page-2">
+      <div class="page-title">Jornada da Alma</div>
+      <div class="page-sub">Sua missão cósmica nesta encarnação</div>
+      <div id="soul-content"></div>
+    </div>
+    <!-- PAGE 4: SINASTRIA -->
+    <div class="page" id="page-3">
+      <div class="page-title">Sinastria</div>
+      <div class="page-sub">A dança entre dois mapas</div>
+      <div id="sinastria-content"></div>
+    </div>
+    <!-- PAGE 5: CHAT IA -->
+    <div class="page" id="page-4">
+      <div class="chat-wrap">
+        <div class="chat-msgs" id="chat-msgs"></div>
+        <div class="chips" id="chat-chips"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chat-input" placeholder="Pergunte ao cosmos..." onkeypress="if(event.key==='Enter')sendChat()">
+          <button class="chat-send" onclick="sendChat()">✦ ENVIAR</button>
+        </div>
+      </div>
+    </div>
+    <!-- PAGE 6: TRÂNSITOS -->
+    <div class="page" id="page-5">
+      <div class="page-title">Trânsitos</div>
+      <div class="page-sub">O céu de agora sobre seu mapa</div>
+      <div id="transits-content"></div>
+    </div>
+    <!-- PAGE 7: EXTRAS -->
+    <div class="page" id="page-6">
+      <div class="page-title">Extras</div>
+      <div class="page-sub">Ferramentas cósmicas para sua jornada</div>
+      <div class="extras-grid">
+        <div class="extra-card" onclick="speakChart()">
+          <div class="extra-ico">🔊</div>
+          <div class="extra-name">Ouvir Mapa</div>
+          <div class="extra-desc">Narração do seu mapa em voz alta</div>
+        </div>
+        <div class="extra-card" onclick="savePNG()">
+          <div class="extra-ico">🖼</div>
+          <div class="extra-name">Exportar Mandala</div>
+          <div class="extra-desc">Salvar imagem da sua mandala</div>
+        </div>
+        <div class="extra-card" onclick="shareMap()">
+          <div class="extra-ico">💌</div>
+          <div class="extra-name">Compartilhar</div>
+          <div class="extra-desc">Envie seu mapa para o mundo</div>
+        </div>
+        <div class="extra-card" onclick="resetApp()">
+          <div class="extra-ico">✨</div>
+          <div class="extra-name">Novo Mapa</div>
+          <div class="extra-desc">Calcular outro mapa astral</div>
+        </div>
+        <div class="extra-card" onclick="showLunarTimer()">
+          <div class="extra-ico">⏳</div>
+          <div class="extra-name">Timer Lunar</div>
+          <div class="extra-desc">Rituais para cada fase da Lua</div>
+        </div>
+        <div class="extra-card" onclick="showKarmicTimeline()">
+          <div class="extra-ico">♾</div>
+          <div class="extra-name">Vidas Passadas</div>
+          <div class="extra-desc">Linha do tempo kármica</div>
+        </div>
+      </div>
+      <div id="extras-extra" style="margin-top:20px"></div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="navTo(0)"><span class="nav-ico">🌌</span>Mandala</button>
+    <button class="nav-btn" onclick="navTo(1)"><span class="nav-ico">🪐</span>Mapa</button>
+    <button class="nav-btn" onclick="navTo(2)"><span class="nav-ico">✨</span>Alma</button>
+    <button class="nav-btn" onclick="navTo(3)"><span class="nav-ico">💫</span>Sinastria</button>
+    <button class="nav-btn" onclick="navTo(4)"><span class="nav-ico">🔮</span>Chat</button>
+    <button class="nav-btn" onclick="navTo(5)"><span class="nav-ico">🌙</span>Trânsitos</button>
+    <button class="nav-btn" onclick="navTo(6)"><span class="nav-ico">⚡</span>Extras</button>
+  </nav>
+</div>
+
+<!-- PLANET MODAL -->
+<div class="modal-bg" id="planet-modal" onclick="closePlanetModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closePlanetModal()">✕</button>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <div id="modal-badges"></div>
+    <div class="modal-text" id="modal-text"></div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Calculando seu mapa...</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STARS BACKGROUND
+// ============================================================
+(function(){
+  const c=document.getElementById('stars-canvas');
+  const ctx=c.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;stars=[];for(let i=0;i<200;i++){stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*.8+.2,a:Math.random(),da:Math.random()*.005+.002})}}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a+=s.da;
+      if(s.a>1||s.a<0)s.da*=-1;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(232,213,163,${s.a*0.7})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();draw();addEventListener('resize',resize);
+})();
+
+// ============================================================
+// ASTRONOMY ENGINE
+// ============================================================
+const RAD=Math.PI/180;
+const SIGNS=['Áries','Touro','Gêmeos','Câncer','Leão','Virgem','Libra','Escorpião','Sagitário','Capricórnio','Aquário','Peixes'];
+const SSYM=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+const PLANET_NAMES=['Sol','Lua','Mercúrio','Vênus','Marte','Júpiter','Saturno','Urano','Netuno','Plutão','Nodo Norte','Quíron'];
+const PLANET_SYMS=['☉','☽','☿','♀','♂','♃','♄','♅','♆','♇','☊','⚷'];
+
+function n360(d){return((d%360)+360)%360}
+function jd(y,mo,d,h){if(mo<=2){y--;mo+=12}const A=Math.floor(y/100);const B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(mo+1))+d+h/24+B-1524.5}
+function T(j){return(j-2451545)/36525}
+
+function sunLon(j){const t=T(j);const L=n360(280.46646+36000.76983*t);const M=n360(357.52911+35999.05029*t);const Mr=M*RAD;const C=1.914602*Math.sin(Mr)+.019993*Math.sin(2*Mr)+.000289*Math.sin(3*Mr);return n360(L+C)}
+function moonLon(j){const t=T(j);const L=n360(218.3165+481267.8813*t);const M=n360(134.9634+477198.8676*t);const F=n360(93.272+483202.0175*t);const D=n360(297.8502+445267.1115*t);return n360(L+6.289*Math.sin(M*RAD)-1.274*Math.sin((2*D-M)*RAD)+.658*Math.sin(2*D*RAD)-.214*Math.sin(2*M*RAD)-.11*Math.sin(2*D*RAD-M*RAD))}
+function mercLon(j){const t=T(j);const L=n360(252.2509+149474.0722*t);const M=n360(174.7948+149472.5155*t);const Mr=M*RAD;return n360(L+23.4400*Math.sin(Mr)+2.9818*Math.sin(2*Mr)+.5255*Math.sin(3*Mr))}
+function venLon(j){const t=T(j);const L=n360(181.9798+58519.2130*t);const M=n360(212.4010+58517.8036*t);const Mr=M*RAD;return n360(L+0.7758*Math.sin(Mr)+.0033*Math.sin(2*Mr))}
+function marLon(j){const t=T(j);const L=n360(355.4333+19141.6964*t);const M=n360(319.5226+19139.8585*t);const Mr=M*RAD;return n360(L+10.6912*Math.sin(Mr)+.6228*Math.sin(2*Mr)+.0503*Math.sin(3*Mr))}
+function jupLon(j){const t=T(j);const L=n360(34.3515+3036.3027*t);const M=n360(20.9202+3034.9057*t);const Mr=M*RAD;return n360(L+5.5549*Math.sin(Mr)+.1683*Math.sin(2*Mr))}
+function satLon(j){const t=T(j);const L=n360(50.0775+1223.5110*t);const M=n360(317.9213+1221.5523*t);const Mr=M*RAD;return n360(L+6.3585*Math.sin(Mr)+.2204*Math.sin(2*Mr))}
+function uraLon(j){const t=T(j);const L=n360(314.0550+430.3150*t);return n360(L+.3451*Math.sin((t*30)*RAD))}
+function nepLon(j){const t=T(j);const L=n360(304.3485+219.8933*t);return n360(L+.1701*Math.sin((t*30)*RAD))}
+function pluLon(j){const t=T(j);return n360(238.929+144.960*t+.3411*Math.sin((t*50)*RAD))}
+function nodLon(j){const t=T(j);return n360(125.0445-1934.1362*t)}
+function chiLon(j){const t=T(j);return n360(49.09+77.22*t)}
+
+function ascLon(j,h,lat){
+  const t=T(j);
+  const theta=n360(100.4606184+36000.7700536*t+h*15);
+  const eps=23.4392911-0.013004167*t;
+  const a=Math.atan2(Math.cos(theta*RAD),-(Math.sin(theta*RAD)*Math.cos(eps*RAD)+Math.tan(lat*RAD)*Math.sin(eps*RAD)));
+  return n360(a*180/Math.PI);
+}
+
+function isRetro(fn,j){
+  try{const a=fn(j+5),b=fn(j-5);let diff=a-b;if(diff>180)diff-=360;if(diff<-180)diff+=360;return diff<0}catch(e){return false}
+}
+
+function calcChart(date,time,lat,lng,name){
+  const d=new Date(date+(time?'T'+time:'T12:00'));
+  const h=d.getHours()+d.getMinutes()/60-lng/15;
+  const J=jd(d.getFullYear(),d.getMonth()+1,d.getDate(),h);
+  const fns=[sunLon,moonLon,mercLon,venLon,marLon,jupLon,satLon,uraLon,nepLon,pluLon,nodLon,chiLon];
+  const planets=fns.map(f=>{const lon=f(J);return{deg:Math.floor(lon%30),min:Math.floor((lon%1)*60),sign:Math.floor(lon/30),lon:n360(lon)}});
+  const retro=fns.map((f,i)=>i>=2?isRetro(f,J):false);
+  const hasTime=!!time;
+  const ascDeg=hasTime?ascLon(J,d.getHours()+d.getMinutes()/60,lat):planets[0].lon;
+  const asc={deg:Math.floor(ascDeg%30),min:Math.floor((ascDeg%1)*60),sign:Math.floor(ascDeg/30),lon:n360(ascDeg)};
+  const houses=Array.from({length:12},(_,i)=>{const cusp=n360(ascDeg+i*30);return{num:i+1,cusp:cusp,sign:Math.floor(cusp/30),planets:[]}});
+  planets.forEach((p,i)=>{const hi=((Math.floor(n360(p.lon-ascDeg)/30))%12+12)%12;houses[hi].planets.push(i)});
+  const ASPECTS=[{name:'Conjunção',angle:0,orb:8,color:'#e8d5a3',harmonic:'neutral'},{name:'Sextil',angle:60,orb:6,color:'#a0b8a0',harmonic:'harmonious'},{name:'Quadratura',angle:90,orb:8,color:'#b07070',harmonic:'tense'},{name:'Trígono',angle:120,orb:8,color:'#7090b0',harmonic:'harmonious'},{name:'Oposição',angle:180,orb:8,color:'#b08050',harmonic:'tense'},{name:'Quincúncio',angle:150,orb:3,color:'#9070a0',harmonic:'tense'}];
+  const aspects=[];
+  for(let i=0;i<10;i++){for(let j2=i+1;j2<10;j2++){let diff=Math.abs(planets[i].lon-planets[j2].lon);if(diff>180)diff=360-diff;ASPECTS.forEach(a=>{const od=Math.abs(diff-a.angle);if(od<=a.orb)aspects.push({p1:i,p2:j2,type:a.name,orb:od.toFixed(1),color:a.color,harmonic:a.harmonic})})}}
+  const stelliums=[];
+  houses.forEach(h2=>{if(h2.planets.length>=3)stelliums.push({house:h2.num,sign:h2.sign,planets:h2.planets})});
+  SIGNS.forEach((_,si)=>{const pp=planets.map((p,i)=>({p,i})).filter(({p})=>p.sign===si).map(({i})=>i);if(pp.length>=3)stelliums.push({sign:si,planets:pp})});
+  return{name,asc,planets,houses,aspects,stelliums,retro,sun:planets[0],moon:planets[1],mercury:planets[2],venus:planets[3],mars:planets[4],jupiter:planets[5],saturn:planets[6],uranus:planets[7],neptune:planets[8],pluto:planets[9],northNode:planets[10],chiron:planets[11],hasTime,J};
+}
+
+// ============================================================
+// INTERPRETATIONS
+// ============================================================
+const PLANET_DESC=['Sua essência central, o núcleo do seu ser e propósito de vida','Sua mente emocional, instintos e mundo interior','Seu modo de comunicar, pensar e processar informações','Sua forma de amar, valorizar e atrair beleza','Sua força de ação, coragem e impulso vital','Seu espírito de expansão, abundância e filosofia','Seu mestre de lições, disciplina e estrutura','Sua revolução interior, originalidade e despertar','Sua conexão com o transcendente, ilusão e espiritualidade','Sua força de transformação, morte e renascimento','Sua missão de alma nesta vida','Sua ferida sagrada que se torna dom de cura'];
+const SIGN_DESC=['Ação, pioneirismo, coragem e independência','Sensualidade, estabilidade, prazer e persistência','Comunicação, versatilidade, curiosidade e dualidade','Sensibilidade, proteção, intuição e família','Criatividade, brilho, generosidade e orgulho','Análise, serviço, perfeição e discernimento','Harmonia, diplomacia, beleza e equilíbrio','Intensidade, transformação, poder e mistério','Expansão, aventura, filosofia e liberdade','Disciplina, ambição, maturidade e realismo','Originalidade, coletividade, liberdade e inovação','Sonho, empatia, compaixão e transcendência'];
+const HOUSE_MEANINGS=['identidade, aparência e presença no mundo','valores materiais, dinheiro e autoestima','comunicação, mente, conexões e aprendizado','lar, raízes, família e base emocional','criatividade, prazer, filhos e romance','trabalho, saúde, rotina e serviço','relacionamentos, parcerias e o outro','sexualidade, recursos compartilhados e transformação','filosofia, viagens, expansão e crenças','carreira, status, legado e realização pública','amizades, grupos, causas coletivas e sonhos','inconsciente, espiritualidade, karma e isolamento'];
+
+function getHouseOf(planet,C){for(let i=0;i<12;i++){if(C.houses[i].planets.includes(planet))return i+1}return 1}
+
+function interpPlanet(pi,C){
+  const p=C.planets[pi];
+  const h=getHouseOf(pi,C);
+  const pn=PLANET_NAMES[pi];const ps=PLANET_DESC[pi];const sg=SIGNS[p.sign];const sd=SIGN_DESC[p.sign];const hm=HOUSE_MEANINGS[h-1];
+  const combos={
+    '0-0':`Em Áries, você brilha como chama — espontâneo, corajoso e genuinamente você. Sua identidade é forte e não teme aparecer. Na Casa ${h} (${hm}), esse Sol ilumina sua capacidade de agir sem medo.`,
+    '0-1':`Em Touro, seu propósito de vida se conecta à terra, à beleza e ao prazer. Você brilha quando está presente no corpo. Na Casa ${h} (${hm}), o Sol traz estabilidade e sensualidade para essa área da sua vida.`,
+    '0-4':`Em Leão, o Sol está em seu domicílio — você nasceu para brilhar! Criatividade, liderança e presença magnética são seu dom. Na Casa ${h} (${hm}), você ilumina e inspira.`,
+    '1-3':`A Lua em Câncer está em seu domicílio. Suas emoções fluem com profundidade e intuição poderosa. Na Casa ${h} (${hm}), você busca segurança e nutrir.`,
+    '3-6':`Vênus em Libra, seu domicílio — você ama com harmonia, beleza e equilíbrio. Relacionamentos são um campo sagrado de criação. Na Casa ${h} (${hm}), a arte de se conectar floresce.`,
+    '4-0':`Marte em Áries é o guerreiro em casa. Sua energia é direta, pioneira e irresistível. Na Casa ${h} (${hm}), você age com coragem total.`,
+  };
+  const key=`${pi}-${p.sign}`;
+  const specific=combos[key];
+  if(specific)return specific;
+  return`${pn} em ${sg} traz ${sd.toLowerCase()} para ${ps.toLowerCase()}. Na Casa ${h} (${hm}), essa energia se manifesta de forma poderosa e singular, moldando como você experimenta essa dimensão da vida.`;
+}
+
+function getDignity(pi,si){
+  const dom={0:4,1:3,2:[2,5],3:[1,6],4:[0,7],5:[8,11],6:[9,10],7:10,8:11,9:7,10:10,11:11};
+  const exalt={0:0,1:1,2:5,3:11,4:9};
+  const pName=PLANET_NAMES[pi];
+  const signs=Array.isArray(dom[pi])?dom[pi]:[dom[pi]];
+  if(signs.includes(si))return'Domicílio';
+  if(exalt[pi]===si)return'Exaltação';
+  return null;
+}
+
+// ============================================================
+// CHART VARIABLE & STATE
+// ============================================================
+let C=null;
+let currentPage=0;
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goTo(screen){
+  document.getElementById('splash').style.display='none';
+  document.getElementById('onboarding').classList.remove('active');
+  document.getElementById('main-app').classList.remove('active');
+  if(screen==='onboarding'){document.getElementById('onboarding').classList.add('active')}
+  else if(screen==='main'){document.getElementById('main-app').classList.add('active')}
+}
+
+function navTo(n){
+  document.querySelectorAll('.page').forEach((p,i)=>{p.classList.toggle('active',i===n)});
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>{b.classList.toggle('active',i===n)});
+  currentPage=n;
+  if(n===4&&document.getElementById('chat-msgs').children.length===0)initChat();
+  if(n===5)renderTransits();
+}
+
+// ============================================================
+// BUILD CHART
+// ============================================================
+function buildChart(){
+  const name=document.getElementById('ob-name').value.trim();
+  const date=document.getElementById('ob-date').value;
+  const time=document.getElementById('ob-time').value;
+  const countryVal=document.getElementById('ob-country').value.split(',');
+  const lat=parseFloat(countryVal[0]),lng=parseFloat(countryVal[1]);
+  const err=document.getElementById('ob-err');
+  if(!name||!date){err.style.display='block';return}
+  err.style.display='none';
+  document.getElementById('loading').classList.add('show');
+  setTimeout(()=>{
+    try{
+      C=calcChart(date,time,lat,lng,name);
+      localStorage.setItem('starsguide_chart',JSON.stringify({name,date,time,lat,lng}));
+      document.getElementById('top-name-display').textContent=name;
+      renderMandala();
+      renderTrio();
+      renderStelliums();
+      renderAspectsPreview();
+      renderPlanets();
+      renderSoul();
+      renderSinastria();
+      document.getElementById('loading').classList.remove('show');
+      goTo('main');
+    }catch(e){
+      document.getElementById('loading').classList.remove('show');
+      showToast('Erro ao calcular mapa. Tente novamente.');
+      console.error(e);
+    }
+  },800);
+}
+
+// ============================================================
+// MANDALA
+// ============================================================
+function renderMandala(){
+  const size=Math.min(window.innerWidth-36,340);
+  const mc=document.getElementById('mc');
+  mc.width=size;mc.height=size;
+  const ctx=mc.getContext('2d');
+  const cx=size/2,cy=size/2,r=size/2-10;
+  ctx.clearRect(0,0,size,size);
+  // BG
+  const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+  grd.addColorStop(0,'#110830');grd.addColorStop(1,'#04010f');
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();
+  // Outer ring
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(200,169,110,.3)';ctx.lineWidth=.5;ctx.stroke();
+  // Zodiac ring
+  const zr=r*.82,ir=r*.68;
+  ctx.beginPath();ctx.arc(cx,cy,zr,0,Math.PI*2);ctx.strokeStyle='rgba(200,169,110,.2)';ctx.lineWidth=.5;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,ir,0,Math.PI*2);ctx.strokeStyle='rgba(200,169,110,.15)';ctx.lineWidth=.5;ctx.stroke();
+  // Sign dividers + symbols
+  ctx.font=`${size*.035}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let i=0;i<12;i++){
+    const a=(i*30-90)*RAD;
+    const an2=((i*30+15)-90)*RAD;
+    ctx.save();ctx.globalAlpha=.3;ctx.strokeStyle='#c8a96e';ctx.lineWidth=.5;
+    ctx.beginPath();ctx.moveTo(cx+ir*Math.cos(a),cy+ir*Math.sin(a));ctx.lineTo(cx+zr*Math.cos(a),cy+zr*Math.sin(a));ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle='rgba(200,169,110,.7)';
+    ctx.fillText(SSYM[i],cx+(zr+ir)/2*Math.cos(an2),cy+(zr+ir)/2*Math.sin(an2));
+  }
+  // Houses
+  const ascA=(C.asc.lon-90)*RAD;
+  for(let i=0;i<12;i++){
+    const a=ascA+(i*30)*RAD;
+    ctx.save();ctx.globalAlpha=.15;ctx.strokeStyle='#c8a96e';ctx.lineWidth=.4;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+ir*Math.cos(a),cy+ir*Math.sin(a));ctx.stroke();
+    ctx.restore();
+  }
+  // ASC line
+  ctx.save();ctx.strokeStyle='rgba(200,169,110,.8)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+ir*Math.cos(ascA),cy+ir*Math.sin(ascA));ctx.stroke();
+  ctx.restore();
+  // Inner circle
+  ctx.beginPath();ctx.arc(cx,cy,r*.2,0,Math.PI*2);ctx.strokeStyle='rgba(124,77,206,.3)';ctx.lineWidth=.5;ctx.stroke();
+  // Aspects
+  const pr=ir*.6;
+  C.aspects.slice(0,12).forEach(asp=>{
+    const a1=((C.planets[asp.p1].lon-90)*RAD);
+    const a2=((C.planets[asp.p2].lon-90)*RAD);
+    const x1=cx+pr*Math.cos(a1),y1=cy+pr*Math.sin(a1);
+    const x2=cx+pr*Math.cos(a2),y2=cy+pr*Math.sin(a2);
+    ctx.save();ctx.globalAlpha=.18;ctx.strokeStyle=asp.color;ctx.lineWidth=.8;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.restore();
+  });
+  // Planets
+  const plr=ir*.85;
+  C.planets.slice(0,10).forEach((p,i)=>{
+    const a=((p.lon-90)*RAD);
+    const px2=cx+plr*Math.cos(a),py2=cy+plr*Math.sin(a);
+    // dot
+    ctx.beginPath();ctx.arc(px2,py2,3,0,Math.PI*2);ctx.fillStyle='#c8a96e';ctx.fill();
+    // symbol
+    ctx.save();ctx.fillStyle='#e8d5a3';ctx.font=`${size*.04}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(PLANET_SYMS[i],px2,py2-10);ctx.restore();
+  });
+  mc.onclick=function(e){
+    const rect=mc.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+    C.planets.slice(0,10).forEach((p,i)=>{
+      const a=((p.lon-90)*RAD);
+      const px2=cx+plr*Math.cos(a),py2=cy+plr*Math.sin(a);
+      if(Math.hypot(mx-px2,my-py2)<18)openPlanetModal(i);
+    });
+  };
+}
+
+// ============================================================
+// TRIO CARDS
+// ============================================================
+function renderTrio(){
+  const area=document.getElementById('trio-cards');
+  const items=[{label:'Sol',pi:0},{label:'Lua',pi:1},{label:'Ascendente',asc:true}];
+  area.innerHTML=items.map(it=>{
+    const p=it.asc?C.asc:C.planets[it.pi];
+    const sym=it.asc?'↑':PLANET_SYMS[it.pi];
+    return`<div class="trio-card">
+      <div class="trio-sym">${sym}</div>
+      <div class="trio-planet">${it.label}</div>
+      <div class="trio-sign">${SSYM[p.sign]} ${SIGNS[p.sign]}</div>
+      <div style="color:var(--dim);font-size:.75rem">${p.deg}°${p.min}'</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// STELLIUMS
+// ============================================================
+function renderStelliums(){
+  const area=document.getElementById('stellium-area');
+  if(!C.stelliums||C.stelliums.length===0){area.innerHTML='';return}
+  const st=C.stelliums[0];
+  const names=st.planets.map(i=>PLANET_NAMES[i]).join(', ');
+  const sign=SIGNS[st.sign];
+  area.innerHTML=`<div class="stellium-banner">
+    <h3>✦ Stellium em ${sign}</h3>
+    <p>Você tem uma concentração de energia cósmica em ${sign} com ${names}. Isso indica uma área de vida onde sua força é extraordinária — e também onde reside seu maior desafio evolutivo.</p>
+  </div>`;
+}
+
+// ============================================================
+// ASPECTS PREVIEW
+// ============================================================
+function renderAspectsPreview(){
+  const area=document.getElementById('aspects-preview');
+  area.innerHTML=C.aspects.slice(0,5).map(a=>`
+    <div class="aspect-row ${a.harmonic}">
+      <span>${PLANET_SYMS[a.p1]} ${PLANET_NAMES[a.p1]}</span>
+      <span style="color:var(--dim);font-size:.8rem">${a.type} ${a.orb}°</span>
+      <span>${PLANET_SYMS[a.p2]} ${PLANET_NAMES[a.p2]}</span>
+    </div>`).join('');
+}
+
+// ============================================================
+// PLANETS LIST
+// ============================================================
+function renderPlanets(){
+  const area=document.getElementById('planets-list');
+  area.innerHTML=C.planets.map((p,i)=>{
+    const h=getHouseOf(i,C);
+    const dig=getDignity(i,p.sign);
+    return`<div class="planet-row" onclick="openPlanetModal(${i})">
+      <div class="planet-sym">${PLANET_SYMS[i]}</div>
+      <div style="flex:1">
+        <div class="planet-name">${PLANET_NAMES[i]}${C.retro[i]?'<span class="badge">℞</span>':''}</div>
+        <div class="planet-pos">${p.deg}° ${p.min}' ${SIGNS[p.sign]} · Casa ${h}${dig?' · '+dig:''}</div>
+      </div>
+      <div style="color:var(--dim);font-size:.8rem">›</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// SOUL JOURNEY
+// ============================================================
+function renderSoul(){
+  const nn=C.northNode,ch=C.chiron;
+  const nnSign=SIGNS[nn.sign],chSign=SIGNS[ch.sign];
+  const karmaSteps=[
+    {title:'Vidas Anteriores — Nodo Sul em '+SIGNS[(nn.sign+6)%12],text:`Você carrega a memória de vidas onde ${SIGN_DESC[(nn.sign+6)%12].toLowerCase()} era seu padrão dominante. Esses talentos já estão integrados, mas agora precisam ser transmutados.`},
+    {title:'Missão desta Vida — Nodo Norte em '+nnSign,text:`Sua alma escolheu aprender ${SIGN_DESC[nn.sign].toLowerCase()}. O caminho pode ser desconfortável no início, mas é exatamente onde seu crescimento maior reside.`},
+    {title:'Ferida e Cura — Quíron em '+chSign,text:`Quíron em ${chSign} traz uma ferida relacionada a ${SIGN_DESC[ch.sign].toLowerCase()}. Essa ferida, quando compreendida, se transforma em seu maior dom de cura para os outros.`},
+    {title:'Portal Kármico',text:`A tensão entre o que já foi vivido e o que ainda será integrado cria os maiores momentos de transformação. Confie no processo evolutivo da sua alma.`},
+    {title:'Realização da Alma',text:`Quando Nodo Norte em ${nnSign} e Quíron em ${chSign} trabalham juntos, você se torna um farol — curado o suficiente para iluminar os outros no mesmo caminho.`},
+  ];
+  document.getElementById('soul-content').innerHTML=`
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">☊ Nodo Norte em ${nnSign}</div>
+      <div class="card-text">Sua missão evolutiva nesta vida. A direção para onde sua alma crescer está em ${nnSign} — ${SIGN_DESC[nn.sign].toLowerCase()}.</div>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">⚷ Quíron em ${chSign}</div>
+      <div class="card-text">A ferida sagrada que se torna seu maior dom. Em ${chSign}, a dor de ${SIGN_DESC[ch.sign].toLowerCase()} se transforma em sabedoria de cura.</div>
+    </div>
+    <div class="sect-hdr"><span>Linha do Tempo Kármica</span></div>
+    <div class="karma-timeline">${karmaSteps.map(s=>`
+      <div class="karma-step">
+        <h4>${s.title}</h4>
+        <p>${s.text}</p>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ============================================================
+// SINASTRIA
+// ============================================================
+function renderSinastria(){
+  document.getElementById('sinastria-content').innerHTML=`
+    <div class="card" style="border-color:rgba(212,133,154,.2)">
+      <div class="card-title">💫 Calcular Sinastria</div>
+      <div class="card-text" style="margin-bottom:16px">Insira os dados da outra pessoa para revelar a dança entre os dois mapas.</div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Nome</label>
+        <input type="text" id="syn-name" placeholder="Nome da outra pessoa">
+      </div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Data de Nascimento</label>
+        <input type="date" id="syn-date">
+      </div>
+      <div style="margin-bottom:12px">
+        <label class="field-label">Hora (opcional)</label>
+        <input type="time" id="syn-time">
+      </div>
+      <div style="margin-bottom:16px">
+        <label class="field-label">País</label>
+      <div style="margin-bottom:16px">
+        <label class="field-label">Cidade de Nascimento</label>
+        <div style="position:relative">
+          <input type="text" id="syn-city-input" placeholder="Ex: Lisboa, Miami, Tóquio..." autocomplete="off"
+            oninput="filterCities('syn')" onfocus="showDrop('syn')" onblur="setTimeout(()=>hideDrop('syn'),200)"
+            style="width:100%;background:var(--mid);border:1px solid rgba(200,169,110,.2);color:var(--text);font-family:'Cormorant Garamond',serif;font-size:1.05rem;padding:14px 16px;outline:none;transition:border-color .3s">
+          <div id="syn-drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:#110830;border:1px solid rgba(200,169,110,.3);border-top:none;max-height:200px;overflow-y:auto;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.6)"></div>
+        </div>
+        <input type="hidden" id="syn-country" value="-23.55,-46.63">
+        <div id="syn-city-label" style="color:var(--gold);font-style:italic;font-size:.82rem;margin-top:6px;min-height:18px">✦ São Paulo, SP — Brasil</div>
+      </div>
+      </div>
+      <button class="btn-cosmic" style="width:100%;padding:14px" onclick="calcSinastria()">✦ CALCULAR COMPATIBILIDADE</button>
+    </div>
+    <div id="syn-result"></div>`;
+}
+
+function calcSinastria(){
+  const name=document.getElementById('syn-name').value.trim();
+  const date=document.getElementById('syn-date').value;
+  const time=document.getElementById('syn-time').value;
+  const cv=document.getElementById('syn-country').value.split(',');
+  if(!name||!date){showToast('Preencha nome e data');return}
+  const C2=calcChart(date,time,parseFloat(cv[0]),parseFloat(cv[1]),name);
+  // Calc compatibility
+  let score=50;
+  const sunSun=Math.abs(C.sun.lon-C2.sun.lon);let ss=sunSun>180?360-sunSun:sunSun;
+  const moonMoon=Math.abs(C.moon.lon-C2.moon.lon);let mm=moonMoon>180?360-moonMoon:moonMoon;
+  const venMar=Math.abs(C.venus.lon-C2.mars.lon);let vm=venMar>180?360-venMar:venMar;
+  [ss,mm,vm].forEach(d=>{if(d<30||Math.abs(d-120)<15||Math.abs(d-60)<10)score+=10;else if(Math.abs(d-90)<10||Math.abs(d-180)<10)score-=5});
+  score=Math.max(30,Math.min(98,score));
+  const label=score>=85?'Almas Gêmeas':score>=70?'Grande Harmonia':score>=55?'Conexão Real':score>=40?'Desafio com Potencial':'Crescimento Mútuo';
+  const synAspects=[];
+  const asp2=[{name:'Conjunção',angle:0,orb:8},{name:'Sextil',angle:60,orb:6},{name:'Trígono',angle:120,orb:8},{name:'Oposição',angle:180,orb:8},{name:'Quadratura',angle:90,orb:8}];
+  [0,1,3,4].forEach(pi=>{[0,1,3,4].forEach(pi2=>{let d=Math.abs(C.planets[pi].lon-C2.planets[pi2].lon);if(d>180)d=360-d;asp2.forEach(a=>{if(Math.abs(d-a.angle)<=a.orb)synAspects.push({p1:PLANET_NAMES[pi],p2:PLANET_NAMES[pi2],type:a.name})})})});
+  document.getElementById('syn-result').innerHTML=`
+    <div class="compat-score-big">
+      <div class="score-num">${score}%</div>
+      <div class="score-label">${label}</div>
+    </div>
+    <div style="padding:0 8px">
+      ${['Sol × Sol','Lua × Lua','Vênus × Marte'].map((l,i)=>{const vals=[ss,mm,vm];const v=Math.round(100-Math.abs(vals[i]-60)/1.8);return`<div class="compat-bar-wrap"><div class="compat-label">${l}</div><div class="compat-bar"><div class="compat-fill" style="width:${Math.max(20,Math.min(95,v))}%"></div></div></div>`}).join('')}
+      <div class="sect-hdr"><span>Aspectos entre os Mapas</span></div>
+      ${synAspects.slice(0,5).map(a=>`<div class="aspect-row"><span>${a.p1}</span><span style="color:var(--dim);font-size:.8rem">${a.type}</span><span>${a.p2}</span></div>`).join('')||'<p style="color:var(--dim);font-style:italic;text-align:center;padding:16px">Nenhum aspecto forte detectado</p>'}
+      <div class="card" style="margin-top:16px;border-color:rgba(212,133,154,.2)">
+        <div class="card-title">💌 Conselho de Relacionamento</div>
+        <div class="card-text">Com ${score}% de compatibilidade, vocês têm uma conexão ${label.toLowerCase()}. ${score>=70?'O fluxo entre os mapas é natural e permite que cada um seja autêntico na presença do outro.':'Existem desafios reais, mas eles podem ser catalisadores de crescimento mútuo profundo.'} O segredo está em honrar as diferenças como portais de evolução.</div>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+const CHAT_CHIPS=['Qual é minha missão de vida?','Por que tenho dificuldades em relacionamentos?','Que carreira combina com meu mapa?','O que meu Stellium revela?','Qual é minha ferida de Quíron?'];
+
+function initChat(){
+  const msgs=document.getElementById('chat-msgs');
+  const chips=document.getElementById('chat-chips');
+  msgs.innerHTML=`<div class="chat-msg msg-ai"><div class="bubble">Olá ${C.name} ✦ Seu mapa foi revelado — vejo seu Sol em <em>${SIGNS[C.sun.sign]}</em>, Lua em <em>${SIGNS[C.moon.sign]}</em> e Ascendente em <em>${SIGNS[C.asc.sign]}</em>. O cosmos tem muito a te revelar. O que você deseja explorar?</div></div>`;
+  chips.innerHTML=CHAT_CHIPS.map(q=>`<div class="chip" onclick="askChip(this,'${q}')">${q}</div>`).join('');
+}
+
+function askChip(el,q){el.style.opacity='.4';el.style.pointerEvents='none';addMsg('user',q);setTimeout(()=>addMsg('ai',generateAnswer(q)),800)}
+
+function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const q=inp.value.trim();
+  if(!q)return;
+  inp.value='';
+  addMsg('user',q);
+  setTimeout(()=>addMsg('ai',generateAnswer(q)),800);
+}
+
+function addMsg(role,text){
+  const msgs=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.className=`chat-msg msg-${role}`;
+  div.innerHTML=`<div class="bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function generateAnswer(q){
+  const ql=q.toLowerCase();
+  if(ql.includes('missão')||ql.includes('vida')){
+    const nn=SIGNS[C.northNode.sign];return`✦ Sua missão de vida está no Nodo Norte em <em>${nn}</em>. Você veio aprender ${SIGN_DESC[C.northNode.sign].toLowerCase()}. O Universo te convida a ir além dos padrões do passado e abraçar o desconforto de crescer nessa direção. É no ${nn} que sua alma floresce.`
+  }
+  if(ql.includes('relacionamento')||ql.includes('amor')||ql.includes('parceiro')){
+    const v=SIGNS[C.venus.sign],m=SIGNS[C.mars.sign];return`✦ Em relacionamentos, sua Vênus em <em>${v}</em> busca ${SIGN_DESC[C.venus.sign].toLowerCase()}. Seu Marte em <em>${m}</em> atrai quem tem energia de ${SIGN_DESC[C.mars.sign].toLowerCase()}. Às vezes existe uma tensão entre o que você quer e o que você atrai — e esse é exatamente o portal de crescimento.`
+  }
+  if(ql.includes('carreira')||ql.includes('trabalho')||ql.includes('profissão')){
+    const mc_sign=C.houses[9].sign;return`✦ O Meio do Céu (Casa 10) em <em>${SIGNS[mc_sign]}</em> revela que você brilha em carreiras que envolvem ${SIGN_DESC[mc_sign].toLowerCase()}. Seu Sol em ${SIGNS[C.sun.sign]} também traz um dom único para o mundo profissional — busque onde você pode ser autenticamente você.`
+  }
+  if(ql.includes('stellium')){
+    if(C.stelliums&&C.stelliums.length>0){const st=C.stelliums[0];const sg=SIGNS[st.sign];const pns=st.planets.map(i=>PLANET_NAMES[i]).join(', ');return`✦ Seu Stellium em <em>${sg}</em> com ${pns} é uma das marcas mais poderosas do seu mapa. Essa concentração de energia indica que ${sg} é o campo onde toda a sua existência se organiza. É de lá que você recebe a força, e também os maiores desafios.`}
+    return`✦ Não vejo um Stellium claro no seu mapa, mas existem outras configurações igualmente poderosas que merecem exploração.`
+  }
+  if(ql.includes('quíron')||ql.includes('ferida')||ql.includes('cura')){
+    return`✦ Seu Quíron em <em>${SIGNS[C.chiron.sign]}</em> traz uma ferida sagrada relacionada a ${SIGN_DESC[C.chiron.sign].toLowerCase()}. Essa é a área onde você mais sentiu dor — e por isso mesmo, onde você tem a capacidade de curar outros de forma extraordinária. A ferida se torna o dom quando você para de fugir dela.`
+  }
+  return`✦ Olhando para seu mapa com Sol em <em>${SIGNS[C.sun.sign]}</em> e Lua em <em>${SIGNS[C.moon.sign]}</em>... O cosmos sussurra que você está exatamente onde deveria estar. Essa pergunta toca em algo profundo do seu caminho. Continue explorando — a resposta já está dentro de você, esperando ser reconhecida.`
+}
+
+// ============================================================
+// TRANSITS
+// ============================================================
+function renderTransits(){
+  const now=new Date();
+  const J=jd(now.getFullYear(),now.getMonth()+1,now.getDate(),now.getHours()+now.getMinutes()/60);
+  const moonAge=((J-2451550.1)%29.53+29.53)%29.53|0;
+  const mSign=Math.floor(moonLon(J)/30);
+  const phases=[{n:'Lua Nova',e:'🌑',r:[0,3]},{n:'Crescente',e:'🌒',r:[4,7]},{n:'Quarto Crescente',e:'🌓',r:[8,10]},{n:'Gibosa Crescente',e:'🌔',r:[11,13]},{n:'Lua Cheia',e:'🌕',r:[14,16]},{n:'Gibosa Minguante',e:'🌖',r:[17,19]},{n:'Quarto Minguante',e:'🌗',r:[20,22]},{n:'Minguante',e:'🌘',r:[23,29]}];
+  const phase=phases.find(p=>moonAge>=p.r[0]&&moonAge<=p.r[1])||phases[0];
+  const fns=[sunLon,moonLon,mercLon,venLon,marLon,jupLon,satLon,uraLon,nepLon,pluLon];
+  const tplanets=fns.map(f=>f(J));
+  const moonMsg={0:'Momento de silêncio e intenção. Plante suas sementes.',4:'Tome ação com coragem.',8:'Ponto de tensão criativa — ajuste seu rumo.',11:'Expansão e colheita se aproximam.',14:'Plenitude e revelação. Manifeste.',17:'Libere o que não serve mais.',20:'Integração e sabedoria. Reflita.',23:'Recolhimento e preparação.'};
+  const mKey=Object.keys(moonMsg).reverse().find(k=>moonAge>=parseInt(k));
+  const transitAspects=[];
+  const ASP2=[{n:'Conjunção',a:0,orb:5},{n:'Trígono',a:120,orb:5},{n:'Quadratura',a:90,orb:5},{n:'Oposição',a:180,orb:5}];
+  tplanets.forEach((tl,ti)=>{C.planets.slice(0,8).forEach((np,ni)=>{let d=Math.abs(tl-np.lon);if(d>180)d=360-d;ASP2.forEach(a=>{if(Math.abs(d-a.a)<=a.orb)transitAspects.push({t:PLANET_NAMES[ti],n:PLANET_NAMES[ni],type:a.n})})})});
+  document.getElementById('transits-content').innerHTML=`
+    <div class="moon-card">
+      <div class="moon-phase-big">${phase.e}</div>
+      <div class="moon-name">${phase.n} em ${SIGNS[mSign]}</div>
+      <div class="moon-detail">Dia ${moonAge} do ciclo lunar</div>
+      <div class="moon-detail" style="margin-top:8px;font-size:.85rem">${moonMsg[mKey]||''}</div>
+    </div>
+    <div class="sect-hdr"><span>Posições Atuais</span></div>
+    ${tplanets.map((tl,ti)=>`<div class="transit-row"><div class="transit-left">${PLANET_SYMS[ti]} ${PLANET_NAMES[ti]}</div><div class="transit-right">${SSYM[Math.floor(tl/30)]} ${SIGNS[Math.floor(tl/30)]} ${Math.floor(tl%30)}°</div></div>`).join('')}
+    <div class="sect-hdr"><span>Trânsitos ao Seu Mapa</span></div>
+    ${transitAspects.length?transitAspects.slice(0,6).map(a=>`<div class="aspect-row"><span style="color:var(--teal)">${a.t} trânsito</span><span style="color:var(--dim);font-size:.8rem">${a.type}</span><span>${a.n} natal</span></div>`).join(''):'<p style="color:var(--dim);font-style:italic;padding:16px;text-align:center">Nenhum trânsito forte no momento</p>'}`;
+}
+
+// ============================================================
+// PLANET MODAL
+// ============================================================
+function openPlanetModal(pi){
+  const p=C.planets[pi];const h=getHouseOf(pi,C);const dig=getDignity(pi,p.sign);
+  document.getElementById('modal-title').textContent=`${PLANET_SYMS[pi]} ${PLANET_NAMES[pi]} em ${SIGNS[p.sign]}`;
+  document.getElementById('modal-sub').textContent=`${p.deg}° ${p.min}' ${SIGNS[p.sign]} · Casa ${h}`;
+  let badges=`<span class="modal-badge">Casa ${h}</span>`;
+  if(C.retro[pi])badges+=`<span class="modal-badge" style="border-color:var(--rose);color:var(--rose)">Retrógrado ℞</span>`;
+  if(dig)badges+=`<span class="modal-badge" style="border-color:var(--teal);color:var(--teal)">${dig}</span>`;
+  document.getElementById('modal-badges').innerHTML=badges;
+  document.getElementById('modal-text').innerHTML=`<p style="margin-bottom:12px;color:var(--dim);font-size:.85rem">${PLANET_DESC[pi]}</p><p>${interpPlanet(pi,C)}</p>`;
+  document.getElementById('planet-modal').classList.add('open');
+}
+
+function closePlanetModal(e){
+  if(!e||e.target===document.getElementById('planet-modal'))document.getElementById('planet-modal').classList.remove('open');
+}
+
+// ============================================================
+// EXTRAS
+// ============================================================
+function speakChart(){
+  if('speechSynthesis' in window){
+    const text=`Seu mapa astral, ${C.name}. Sol em ${SIGNS[C.sun.sign]}. Lua em ${SIGNS[C.moon.sign]}. Ascendente em ${SIGNS[C.asc.sign]}. Nodo Norte em ${SIGNS[C.northNode.sign]}. Quíron em ${SIGNS[C.chiron.sign]}.`;
+    const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';speechSynthesis.speak(u);showToast('Narrando seu mapa ✦');
+  }else{showToast('Voz não disponível neste navegador')}
+}
+
+function savePNG(){
+  const mc=document.getElementById('mc');
+  const link=document.createElement('a');link.download=`mapa-${C.name}.png`;link.href=mc.toDataURL();link.click();showToast('Mandala salva ✦');
+}
+
+function shareMap(){
+  const text=`✦ Meu Mapa Astral\n☉ Sol em ${SIGNS[C.sun.sign]}\n☽ Lua em ${SIGNS[C.moon.sign]}\nAsc ${SIGNS[C.asc.sign]}\n\nDescubra o seu em StarsGuide ✨`;
+  if(navigator.share){navigator.share({title:'Meu Mapa Astral',text:text})}
+  else{navigator.clipboard.writeText(text).then(()=>showToast('Copiado ✦')).catch(()=>showToast('Não foi possível copiar'))}
+}
+
+function resetApp(){
+  if(confirm('Deseja calcular um novo mapa?')){localStorage.removeItem('starsguide_chart');location.reload()}}
+
+function showLunarTimer(){
+  const area=document.getElementById('extras-extra');
+  const now=new Date();const J=jd(now.getFullYear(),now.getMonth()+1,now.getDate(),now.getHours());
+  const age=((J-2451550.1)%29.53+29.53)%29.53|0;
+  const rituals=[{phase:'🌑 Lua Nova',ritual:'Escreva suas intenções. Acenda uma vela branca. Medite em silêncio sobre o que deseja manifestar.'},{phase:'🌓 Quarto Crescente',ritual:'Tome ação em direção aos seus objetivos. Quebre padrões limitantes. Ouse dar o próximo passo.'},{phase:'🌕 Lua Cheia',ritual:'Celebre suas conquistas. Faça uma lista de gratidão. Banho de sal grosso para liberar energias densas.'},{phase:'🌗 Quarto Minguante',ritual:'Libere o que não serve mais. Perdoe a si e aos outros. Simplifique sua vida.'}];
+  area.innerHTML=`<div class="sect-hdr"><span>Rituais Lunares</span></div>
+  <div style="display:grid;gap:12px">${rituals.map(r=>`<div class="card"><div class="card-title">${r.phase}</div><div class="card-text">${r.ritual}</div></div>`).join('')}</div>`;
+}
+
+function showKarmicTimeline(){
+  const area=document.getElementById('extras-extra');
+  const nn=SIGNS[C.northNode.sign],ns=SIGNS[(C.northNode.sign+6)%12];
+  const lives=[{era:'Civilização Antiga',desc:`Em ${ns}, você viveu como ${SIGN_DESC[(C.northNode.sign+6)%12].toLowerCase()}. Uma alma que dominou esse campo, mas que agora busca transcendê-lo.`},{era:'Vida Medieval',desc:'Você carregou papéis de liderança ou servidão, desenvolvendo compaixão através do sofrimento coletivo.'},{era:'Vida Recente',desc:`Próximo ao seu Nodo Sul em ${ns}, você aperfeiçoou dons que agora são naturais — mas também hábitos que precisam ser liberados.`},{era:'Entre Vidas',desc:'Sua alma escolheu este mapa conscientemente, sabendo exatamente que desafios precisava para evoluir.'},{era:'Esta Vida',desc:`Em direção ao Nodo Norte em ${nn}, sua alma caminha para ${SIGN_DESC[C.northNode.sign].toLowerCase()}. Este é o horizonte da sua evolução.`}];
+  area.innerHTML=`<div class="sect-hdr"><span>Linha do Tempo Kármica</span></div>
+  <div class="karma-timeline">${lives.map(l=>`<div class="karma-step"><h4>${l.era}</h4><p>${l.desc}</p></div>`).join('')}</div>`;
+}
+
+// ============================================================
+// TOAST
+
+// ============================================================
+// CITIES DATABASE + AUTOCOMPLETE
+// ============================================================
+const CITIES=[
+  // ACRE
+  {n:"Rio Branco, AC",c:"Brasil",v:"-9.97,-67.81"},{n:"Cruzeiro do Sul, AC",c:"Brasil",v:"-7.62,-72.67"},
+  {n:"Sena Madureira, AC",c:"Brasil",v:"-9.07,-68.66"},{n:"Tarauacá, AC",c:"Brasil",v:"-8.16,-70.77"},
+  {n:"Feijó, AC",c:"Brasil",v:"-8.17,-70.35"},{n:"Brasiléia, AC",c:"Brasil",v:"-10.99,-68.74"},
+  {n:"Rodrigues Alves, AC",c:"Brasil",v:"-7.74,-72.64"},{n:"Mâncio Lima, AC",c:"Brasil",v:"-7.61,-72.89"},
+  {n:"Epitaciolândia, AC",c:"Brasil",v:"-11.02,-68.72"},{n:"Plácido de Castro, AC",c:"Brasil",v:"-10.34,-67.18"},
+  {n:"Xapuri, AC",c:"Brasil",v:"-10.65,-68.50"},{n:"Capixaba, AC",c:"Brasil",v:"-10.56,-67.67"},
+  {n:"Senador Guiomard, AC",c:"Brasil",v:"-10.15,-67.73"},{n:"Porto Acre, AC",c:"Brasil",v:"-9.58,-67.53"},
+  {n:"Acrelândia, AC",c:"Brasil",v:"-9.99,-66.89"},{n:"Bujari, AC",c:"Brasil",v:"-9.83,-67.95"},
+  // ALAGOAS
+  {n:"Maceió, AL",c:"Brasil",v:"-9.67,-35.74"},{n:"Arapiraca, AL",c:"Brasil",v:"-9.75,-36.66"},
+  {n:"Palmeira dos Índios, AL",c:"Brasil",v:"-9.41,-36.62"},{n:"União dos Palmares, AL",c:"Brasil",v:"-9.16,-36.03"},
+  {n:"Penedo, AL",c:"Brasil",v:"-10.29,-36.59"},{n:"São Miguel dos Campos, AL",c:"Brasil",v:"-9.78,-36.09"},
+  {n:"Rio Largo, AL",c:"Brasil",v:"-9.48,-35.85"},{n:"Delmiro Gouveia, AL",c:"Brasil",v:"-9.39,-37.99"},
+  {n:"Marechal Deodoro, AL",c:"Brasil",v:"-9.71,-35.90"},{n:"Coruripe, AL",c:"Brasil",v:"-10.13,-36.18"},
+  {n:"Santana do Ipanema, AL",c:"Brasil",v:"-9.37,-37.24"},{n:"Murici, AL",c:"Brasil",v:"-9.32,-35.94"},
+  {n:"São Luís do Quitunde, AL",c:"Brasil",v:"-9.32,-35.56"},{n:"Piranhas, AL",c:"Brasil",v:"-9.62,-37.75"},
+  {n:"Batalha, AL",c:"Brasil",v:"-9.67,-37.12"},{n:"Traipu, AL",c:"Brasil",v:"-9.97,-37.01"},
+  // AMAPÁ
+  {n:"Macapá, AP",c:"Brasil",v:"-0.04,-51.07"},{n:"Santana, AP",c:"Brasil",v:"-0.05,-51.19"},
+  {n:"Laranjal do Jari, AP",c:"Brasil",v:"-0.80,-52.46"},{n:"Oiapoque, AP",c:"Brasil",v:"3.84,-51.83"},
+  {n:"Mazagão, AP",c:"Brasil",v:"-0.12,-51.29"},{n:"Porto Grande, AP",c:"Brasil",v:"0.71,-51.41"},
+  {n:"Ferreira Gomes, AP",c:"Brasil",v:"0.86,-51.18"},{n:"Calçoene, AP",c:"Brasil",v:"2.50,-50.95"},
+  {n:"Tartarugalzinho, AP",c:"Brasil",v:"1.51,-50.91"},{n:"Amapá, AP",c:"Brasil",v:"2.05,-50.80"},
+  // AMAZONAS
+  {n:"Manaus, AM",c:"Brasil",v:"-3.10,-60.02"},{n:"Parintins, AM",c:"Brasil",v:"-2.63,-56.74"},
+  {n:"Itacoatiara, AM",c:"Brasil",v:"-3.14,-58.44"},{n:"Manacapuru, AM",c:"Brasil",v:"-3.30,-60.62"},
+  {n:"Coari, AM",c:"Brasil",v:"-4.08,-63.14"},{n:"Tefé, AM",c:"Brasil",v:"-3.35,-64.71"},
+  {n:"Tabatinga, AM",c:"Brasil",v:"-4.25,-69.94"},{n:"Maués, AM",c:"Brasil",v:"-3.38,-57.72"},
+  {n:"São Gabriel da Cachoeira, AM",c:"Brasil",v:"-0.13,-67.09"},{n:"Borba, AM",c:"Brasil",v:"-4.39,-59.59"},
+  {n:"Humaitá, AM",c:"Brasil",v:"-7.51,-63.01"},{n:"Careiro, AM",c:"Brasil",v:"-3.88,-60.39"},
+  {n:"Autazes, AM",c:"Brasil",v:"-3.58,-59.13"},{n:"Presidente Figueiredo, AM",c:"Brasil",v:"-1.96,-60.02"},
+  {n:"Iranduba, AM",c:"Brasil",v:"-3.28,-60.19"},{n:"Benjamin Constant, AM",c:"Brasil",v:"-4.38,-70.02"},
+  {n:"Lábrea, AM",c:"Brasil",v:"-7.26,-64.80"},{n:"Manicoré, AM",c:"Brasil",v:"-5.81,-61.30"},
+  {n:"Novo Airão, AM",c:"Brasil",v:"-2.63,-60.94"},{n:"Boca do Acre, AM",c:"Brasil",v:"-8.75,-67.39"},
+  {n:"Eirunepé, AM",c:"Brasil",v:"-6.66,-69.87"},{n:"São Paulo de Olivença, AM",c:"Brasil",v:"-3.46,-68.92"},
+  {n:"Carauari, AM",c:"Brasil",v:"-4.88,-66.90"},{n:"Jutaí, AM",c:"Brasil",v:"-2.74,-66.77"},
+  // BAHIA
+  {n:"Salvador, BA",c:"Brasil",v:"-12.97,-38.50"},{n:"Feira de Santana, BA",c:"Brasil",v:"-12.27,-38.97"},
+  {n:"Vitória da Conquista, BA",c:"Brasil",v:"-14.86,-40.84"},{n:"Camaçari, BA",c:"Brasil",v:"-12.70,-38.32"},
+  {n:"Juazeiro, BA",c:"Brasil",v:"-9.43,-40.50"},{n:"Ilhéus, BA",c:"Brasil",v:"-14.79,-39.04"},
+  {n:"Lauro de Freitas, BA",c:"Brasil",v:"-12.90,-38.33"},{n:"Jequié, BA",c:"Brasil",v:"-13.86,-40.08"},
+  {n:"Teixeira de Freitas, BA",c:"Brasil",v:"-17.53,-39.74"},{n:"Alagoinhas, BA",c:"Brasil",v:"-12.14,-38.42"},
+  {n:"Barreiras, BA",c:"Brasil",v:"-12.15,-44.99"},{n:"Porto Seguro, BA",c:"Brasil",v:"-16.44,-39.07"},
+  {n:"Simões Filho, BA",c:"Brasil",v:"-12.79,-38.40"},{n:"Paulo Afonso, BA",c:"Brasil",v:"-9.40,-38.21"},
+  {n:"Eunápolis, BA",c:"Brasil",v:"-16.38,-39.58"},{n:"Cruz das Almas, BA",c:"Brasil",v:"-12.67,-39.10"},
+  {n:"Itabuna, BA",c:"Brasil",v:"-14.79,-39.28"},{n:"Serrinha, BA",c:"Brasil",v:"-11.66,-39.01"},
+  {n:"Santo Antônio de Jesus, BA",c:"Brasil",v:"-12.97,-39.26"},{n:"Valença, BA",c:"Brasil",v:"-13.37,-39.08"},
+  {n:"Senhor do Bonfim, BA",c:"Brasil",v:"-10.46,-40.19"},{n:"Jacobina, BA",c:"Brasil",v:"-11.18,-40.52"},
+  {n:"Itaberaba, BA",c:"Brasil",v:"-12.52,-40.30"},{n:"Ipirá, BA",c:"Brasil",v:"-12.16,-39.74"},
+  {n:"Guanambi, BA",c:"Brasil",v:"-14.22,-42.78"},{n:"Brumado, BA",c:"Brasil",v:"-14.20,-41.67"},
+  {n:"Itamaraju, BA",c:"Brasil",v:"-17.04,-39.53"},{n:"Conceição do Coité, BA",c:"Brasil",v:"-11.56,-39.28"},
+  {n:"Catu, BA",c:"Brasil",v:"-12.36,-38.38"},{n:"Ibotirama, BA",c:"Brasil",v:"-12.18,-43.22"},
+  {n:"Bom Jesus da Lapa, BA",c:"Brasil",v:"-13.26,-43.42"},{n:"Irecê, BA",c:"Brasil",v:"-11.30,-41.86"},
+  {n:"Mucuri, BA",c:"Brasil",v:"-18.08,-39.55"},{n:"Euclides da Cunha, BA",c:"Brasil",v:"-10.51,-39.01"},
+  {n:"Canavieiras, BA",c:"Brasil",v:"-15.67,-38.95"},{n:"Madre de Deus, BA",c:"Brasil",v:"-12.74,-38.62"},
+  {n:"Candeias, BA",c:"Brasil",v:"-12.67,-38.55"},{n:"Entre Rios, BA",c:"Brasil",v:"-11.94,-38.09"},
+  {n:"Esplanada, BA",c:"Brasil",v:"-11.80,-37.94"},{n:"Riachão do Jacuípe, BA",c:"Brasil",v:"-11.81,-39.39"},
+  {n:"Tucano, BA",c:"Brasil",v:"-10.97,-38.79"},{n:"Monte Santo, BA",c:"Brasil",v:"-10.44,-39.33"},
+  {n:"Medeiros Neto, BA",c:"Brasil",v:"-17.37,-40.24"},{n:"Mucugê, BA",c:"Brasil",v:"-13.00,-41.37"},
+  {n:"Lençóis, BA",c:"Brasil",v:"-12.56,-41.39"},{n:"Xique-Xique, BA",c:"Brasil",v:"-10.82,-42.73"},
+  // CEARÁ
+  {n:"Fortaleza, CE",c:"Brasil",v:"-3.73,-38.52"},{n:"Caucaia, CE",c:"Brasil",v:"-3.74,-38.66"},
+  {n:"Juazeiro do Norte, CE",c:"Brasil",v:"-7.21,-39.32"},{n:"Maracanaú, CE",c:"Brasil",v:"-3.87,-38.63"},
+  {n:"Sobral, CE",c:"Brasil",v:"-3.69,-40.35"},{n:"Crato, CE",c:"Brasil",v:"-7.23,-39.41"},
+  {n:"Itapipoca, CE",c:"Brasil",v:"-3.49,-39.58"},{n:"Maranguape, CE",c:"Brasil",v:"-3.89,-38.68"},
+  {n:"Iguatu, CE",c:"Brasil",v:"-6.36,-39.30"},{n:"Quixadá, CE",c:"Brasil",v:"-4.97,-39.02"},
+  {n:"Pacajus, CE",c:"Brasil",v:"-4.17,-38.46"},{n:"Quixeramobim, CE",c:"Brasil",v:"-5.19,-39.29"},
+  {n:"Acaraú, CE",c:"Brasil",v:"-2.89,-40.12"},{n:"Canindé, CE",c:"Brasil",v:"-4.36,-39.31"},
+  {n:"Russas, CE",c:"Brasil",v:"-4.94,-37.97"},{n:"Tianguá, CE",c:"Brasil",v:"-3.73,-40.99"},
+  {n:"Crateús, CE",c:"Brasil",v:"-5.18,-40.67"},{n:"Cascavel, CE",c:"Brasil",v:"-4.14,-38.24"},
+  {n:"Barbalha, CE",c:"Brasil",v:"-7.31,-39.30"},{n:"Camocim, CE",c:"Brasil",v:"-2.90,-40.84"},
+  {n:"Baturité, CE",c:"Brasil",v:"-4.33,-38.88"},{n:"Limoeiro do Norte, CE",c:"Brasil",v:"-5.14,-38.10"},
+  {n:"Morada Nova, CE",c:"Brasil",v:"-5.11,-38.37"},{n:"Icó, CE",c:"Brasil",v:"-6.40,-38.86"},
+  {n:"Tauá, CE",c:"Brasil",v:"-5.98,-40.29"},{n:"Aquiraz, CE",c:"Brasil",v:"-3.90,-38.39"},
+  {n:"Horizonte, CE",c:"Brasil",v:"-4.10,-38.49"},{n:"Eusébio, CE",c:"Brasil",v:"-3.89,-38.45"},
+  {n:"Mauriti, CE",c:"Brasil",v:"-7.38,-38.78"},{n:"Missão Velha, CE",c:"Brasil",v:"-7.25,-39.14"},
+  {n:"Guaraciaba do Norte, CE",c:"Brasil",v:"-4.16,-40.75"},{n:"Brejo Santo, CE",c:"Brasil",v:"-7.49,-38.99"},
+  // DISTRITO FEDERAL
+  {n:"Brasília, DF",c:"Brasil",v:"-15.78,-47.93"},{n:"Ceilândia, DF",c:"Brasil",v:"-15.81,-48.11"},
+  {n:"Taguatinga, DF",c:"Brasil",v:"-15.83,-48.06"},{n:"Planaltina, DF",c:"Brasil",v:"-15.46,-47.61"},
+  {n:"Samambaia, DF",c:"Brasil",v:"-15.88,-48.10"},{n:"Sobradinho, DF",c:"Brasil",v:"-15.65,-47.79"},
+  {n:"Gama, DF",c:"Brasil",v:"-16.01,-48.06"},{n:"Santa Maria, DF",c:"Brasil",v:"-16.02,-48.04"},
+  {n:"Recanto das Emas, DF",c:"Brasil",v:"-15.91,-48.07"},{n:"São Sebastião, DF",c:"Brasil",v:"-15.90,-47.80"},
+  {n:"Guará, DF",c:"Brasil",v:"-15.83,-47.98"},{n:"Águas Claras, DF",c:"Brasil",v:"-15.84,-48.02"},
+  {n:"Park Way, DF",c:"Brasil",v:"-15.90,-47.99"},{n:"Lago Sul, DF",c:"Brasil",v:"-15.82,-47.88"},
+  {n:"Lago Norte, DF",c:"Brasil",v:"-15.73,-47.88"},{n:"Riacho Fundo, DF",c:"Brasil",v:"-15.90,-48.05"},
+  // ESPÍRITO SANTO
+  {n:"Vitória, ES",c:"Brasil",v:"-20.32,-40.34"},{n:"Serra, ES",c:"Brasil",v:"-20.13,-40.31"},
+  {n:"Vila Velha, ES",c:"Brasil",v:"-20.35,-40.29"},{n:"Cariacica, ES",c:"Brasil",v:"-20.27,-40.42"},
+  {n:"Cachoeiro de Itapemirim, ES",c:"Brasil",v:"-20.85,-41.11"},{n:"Linhares, ES",c:"Brasil",v:"-19.39,-40.07"},
+  {n:"Colatina, ES",c:"Brasil",v:"-19.54,-40.63"},{n:"Guarapari, ES",c:"Brasil",v:"-20.67,-40.50"},
+  {n:"São Mateus, ES",c:"Brasil",v:"-18.72,-39.86"},{n:"Aracruz, ES",c:"Brasil",v:"-19.82,-40.27"},
+  {n:"Viana, ES",c:"Brasil",v:"-20.39,-40.50"},{n:"Nova Venécia, ES",c:"Brasil",v:"-18.72,-40.40"},
+  {n:"Barra de São Francisco, ES",c:"Brasil",v:"-18.75,-40.89"},{n:"Santa Maria de Jetibá, ES",c:"Brasil",v:"-20.02,-40.74"},
+  {n:"Domingos Martins, ES",c:"Brasil",v:"-20.36,-40.66"},{n:"Conceição da Barra, ES",c:"Brasil",v:"-18.59,-39.73"},
+  {n:"Afonso Cláudio, ES",c:"Brasil",v:"-20.07,-41.12"},{n:"Piúma, ES",c:"Brasil",v:"-20.83,-40.73"},
+  // GOIÁS
+  {n:"Goiânia, GO",c:"Brasil",v:"-16.68,-49.25"},{n:"Aparecida de Goiânia, GO",c:"Brasil",v:"-16.82,-49.24"},
+  {n:"Anápolis, GO",c:"Brasil",v:"-16.33,-48.95"},{n:"Rio Verde, GO",c:"Brasil",v:"-17.80,-50.93"},
+  {n:"Luziânia, GO",c:"Brasil",v:"-16.25,-47.95"},{n:"Águas Lindas de Goiás, GO",c:"Brasil",v:"-15.75,-47.46"},
+  {n:"Valparaíso de Goiás, GO",c:"Brasil",v:"-16.07,-47.98"},{n:"Trindade, GO",c:"Brasil",v:"-16.65,-49.49"},
+  {n:"Formosa, GO",c:"Brasil",v:"-15.54,-47.34"},{n:"Novo Gama, GO",c:"Brasil",v:"-16.05,-47.99"},
+  {n:"Itumbiara, GO",c:"Brasil",v:"-18.42,-49.22"},{n:"Jataí, GO",c:"Brasil",v:"-17.88,-51.71"},
+  {n:"Senador Canedo, GO",c:"Brasil",v:"-16.70,-49.10"},{n:"Catalão, GO",c:"Brasil",v:"-18.17,-47.94"},
+  {n:"Caldas Novas, GO",c:"Brasil",v:"-17.74,-48.62"},{n:"Planaltina, GO",c:"Brasil",v:"-15.46,-47.61"},
+  {n:"Mineiros, GO",c:"Brasil",v:"-17.57,-52.55"},{n:"Inhumas, GO",c:"Brasil",v:"-16.36,-49.49"},
+  {n:"Goianésia, GO",c:"Brasil",v:"-15.32,-49.12"},{n:"Morrinhos, GO",c:"Brasil",v:"-17.73,-49.10"},
+  {n:"Quirinópolis, GO",c:"Brasil",v:"-18.45,-50.46"},{n:"Porangatu, GO",c:"Brasil",v:"-13.44,-49.15"},
+  {n:"São Luís de Montes Belos, GO",c:"Brasil",v:"-16.52,-50.37"},{n:"Pirenópolis, GO",c:"Brasil",v:"-15.85,-48.96"},
+  {n:"Itapuranga, GO",c:"Brasil",v:"-15.56,-49.95"},{n:"Ceres, GO",c:"Brasil",v:"-15.30,-49.60"},
+  {n:"Rubiataba, GO",c:"Brasil",v:"-15.16,-49.80"},{n:"Iporá, GO",c:"Brasil",v:"-16.44,-51.12"},
+  {n:"Anicuns, GO",c:"Brasil",v:"-16.46,-49.96"},{n:"Goiás, GO",c:"Brasil",v:"-15.93,-50.14"},
+  // MARANHÃO
+  {n:"São Luís, MA",c:"Brasil",v:"-2.53,-44.30"},{n:"Imperatriz, MA",c:"Brasil",v:"-5.52,-47.49"},
+  {n:"Timon, MA",c:"Brasil",v:"-5.09,-42.83"},{n:"Caxias, MA",c:"Brasil",v:"-4.86,-43.36"},
+  {n:"Codó, MA",c:"Brasil",v:"-4.45,-43.89"},{n:"Paço do Lumiar, MA",c:"Brasil",v:"-2.51,-44.10"},
+  {n:"Açailândia, MA",c:"Brasil",v:"-4.95,-47.50"},{n:"Bacabal, MA",c:"Brasil",v:"-4.22,-44.79"},
+  {n:"Balsas, MA",c:"Brasil",v:"-7.53,-46.04"},{n:"Santa Inês, MA",c:"Brasil",v:"-3.66,-45.38"},
+  {n:"Pinheiro, MA",c:"Brasil",v:"-2.52,-45.08"},{n:"Chapadinha, MA",c:"Brasil",v:"-3.74,-43.36"},
+  {n:"São José de Ribamar, MA",c:"Brasil",v:"-2.56,-44.05"},{n:"Pedreiras, MA",c:"Brasil",v:"-4.57,-44.60"},
+  {n:"Viana, MA",c:"Brasil",v:"-3.22,-45.00"},{n:"Presidente Dutra, MA",c:"Brasil",v:"-5.28,-44.49"},
+  {n:"Coroatá, MA",c:"Brasil",v:"-4.13,-44.13"},{n:"Barra do Corda, MA",c:"Brasil",v:"-5.50,-45.24"},
+  {n:"Zé Doca, MA",c:"Brasil",v:"-3.27,-45.65"},{n:"Buriticupu, MA",c:"Brasil",v:"-4.33,-46.44"},
+  {n:"Arame, MA",c:"Brasil",v:"-4.90,-46.54"},{n:"Monção, MA",c:"Brasil",v:"-3.48,-45.26"},
+  {n:"Itapecuru Mirim, MA",c:"Brasil",v:"-3.40,-44.36"},{n:"Pindaré-Mirim, MA",c:"Brasil",v:"-3.61,-45.34"},
+  {n:"Altamira do Maranhão, MA",c:"Brasil",v:"-3.99,-45.47"},{n:"Carolina, MA",c:"Brasil",v:"-7.33,-47.47"},
+  {n:"Tutóia, MA",c:"Brasil",v:"-2.76,-42.27"},{n:"Brejo, MA",c:"Brasil",v:"-3.68,-42.75"},
+  // MATO GROSSO
+  {n:"Cuiabá, MT",c:"Brasil",v:"-15.60,-56.10"},{n:"Várzea Grande, MT",c:"Brasil",v:"-15.65,-56.13"},
+  {n:"Rondonópolis, MT",c:"Brasil",v:"-16.47,-54.64"},{n:"Sinop, MT",c:"Brasil",v:"-11.86,-55.51"},
+  {n:"Tangará da Serra, MT",c:"Brasil",v:"-14.62,-57.49"},{n:"Cáceres, MT",c:"Brasil",v:"-16.07,-57.68"},
+  {n:"Sorriso, MT",c:"Brasil",v:"-12.54,-55.72"},{n:"Lucas do Rio Verde, MT",c:"Brasil",v:"-13.05,-55.91"},
+  {n:"Primavera do Leste, MT",c:"Brasil",v:"-15.55,-54.28"},{n:"Barra do Garças, MT",c:"Brasil",v:"-15.89,-52.26"},
+  {n:"Alta Floresta, MT",c:"Brasil",v:"-9.87,-56.09"},{n:"Nova Mutum, MT",c:"Brasil",v:"-13.83,-56.08"},
+  {n:"Guarantã do Norte, MT",c:"Brasil",v:"-9.79,-54.90"},{n:"Colider, MT",c:"Brasil",v:"-10.81,-55.46"},
+  {n:"Matupá, MT",c:"Brasil",v:"-10.24,-54.93"},{n:"Peixoto de Azevedo, MT",c:"Brasil",v:"-10.22,-54.99"},
+  {n:"Juína, MT",c:"Brasil",v:"-11.37,-58.74"},{n:"Juara, MT",c:"Brasil",v:"-11.26,-57.52"},
+  {n:"São Félix do Araguaia, MT",c:"Brasil",v:"-11.62,-50.67"},{n:"Água Boa, MT",c:"Brasil",v:"-14.02,-52.16"},
+  // MATO GROSSO DO SUL
+  {n:"Campo Grande, MS",c:"Brasil",v:"-20.45,-54.62"},{n:"Dourados, MS",c:"Brasil",v:"-22.22,-54.81"},
+  {n:"Três Lagoas, MS",c:"Brasil",v:"-20.75,-51.70"},{n:"Corumbá, MS",c:"Brasil",v:"-19.01,-57.65"},
+  {n:"Ponta Porã, MS",c:"Brasil",v:"-22.54,-55.73"},{n:"Naviraí, MS",c:"Brasil",v:"-23.06,-54.20"},
+  {n:"Nova Andradina, MS",c:"Brasil",v:"-22.23,-53.34"},{n:"Aquidauana, MS",c:"Brasil",v:"-20.47,-55.79"},
+  {n:"Maracaju, MS",c:"Brasil",v:"-21.61,-55.17"},{n:"Rio Brilhante, MS",c:"Brasil",v:"-21.80,-54.54"},
+  {n:"Sidrolândia, MS",c:"Brasil",v:"-20.93,-54.97"},{n:"Aparecida do Taboado, MS",c:"Brasil",v:"-20.09,-51.09"},
+  {n:"Paranaíba, MS",c:"Brasil",v:"-19.68,-51.19"},{n:"Bonito, MS",c:"Brasil",v:"-21.12,-56.48"},
+  {n:"Coxim, MS",c:"Brasil",v:"-18.51,-54.76"},{n:"Amambai, MS",c:"Brasil",v:"-23.11,-55.23"},
+  {n:"Iguatemi, MS",c:"Brasil",v:"-23.68,-54.56"},{n:"Miranda, MS",c:"Brasil",v:"-20.24,-56.38"},
+  // MINAS GERAIS
+  {n:"Belo Horizonte, MG",c:"Brasil",v:"-19.92,-43.94"},{n:"Uberlândia, MG",c:"Brasil",v:"-18.92,-48.28"},
+  {n:"Contagem, MG",c:"Brasil",v:"-19.93,-44.05"},{n:"Juiz de Fora, MG",c:"Brasil",v:"-21.76,-43.35"},
+  {n:"Betim, MG",c:"Brasil",v:"-19.97,-44.20"},{n:"Montes Claros, MG",c:"Brasil",v:"-16.72,-43.86"},
+  {n:"Ribeirão das Neves, MG",c:"Brasil",v:"-19.77,-44.09"},{n:"Uberaba, MG",c:"Brasil",v:"-19.74,-47.93"},
+  {n:"Governador Valadares, MG",c:"Brasil",v:"-18.85,-41.95"},{n:"Ipatinga, MG",c:"Brasil",v:"-19.47,-42.54"},
+  {n:"Sete Lagoas, MG",c:"Brasil",v:"-19.47,-44.25"},{n:"Divinópolis, MG",c:"Brasil",v:"-20.14,-44.88"},
+  {n:"Santa Luzia, MG",c:"Brasil",v:"-19.77,-43.85"},{n:"Ibirité, MG",c:"Brasil",v:"-20.02,-44.06"},
+  {n:"Poços de Caldas, MG",c:"Brasil",v:"-21.79,-46.57"},{n:"Varginha, MG",c:"Brasil",v:"-21.55,-45.43"},
+  {n:"Patos de Minas, MG",c:"Brasil",v:"-18.58,-46.52"},{n:"Pouso Alegre, MG",c:"Brasil",v:"-22.23,-45.94"},
+  {n:"Barbacena, MG",c:"Brasil",v:"-21.23,-43.78"},{n:"Sabará, MG",c:"Brasil",v:"-19.89,-43.81"},
+  {n:"Araguari, MG",c:"Brasil",v:"-18.65,-48.19"},{n:"Nova Lima, MG",c:"Brasil",v:"-19.99,-43.85"},
+  {n:"Teófilo Otoni, MG",c:"Brasil",v:"-17.86,-41.51"},{n:"Ubá, MG",c:"Brasil",v:"-21.12,-43.00"},
+  {n:"Coronel Fabriciano, MG",c:"Brasil",v:"-19.53,-42.63"},{n:"Conselheiro Lafaiete, MG",c:"Brasil",v:"-20.66,-43.79"},
+  {n:"Passos, MG",c:"Brasil",v:"-20.72,-46.61"},{n:"Lavras, MG",c:"Brasil",v:"-21.25,-45.00"},
+  {n:"Itabira, MG",c:"Brasil",v:"-19.62,-43.23"},{n:"Muriaé, MG",c:"Brasil",v:"-21.13,-42.37"},
+  {n:"Araxá, MG",c:"Brasil",v:"-19.59,-46.94"},{n:"João Monlevade, MG",c:"Brasil",v:"-19.81,-43.17"},
+  {n:"Viçosa, MG",c:"Brasil",v:"-20.76,-42.88"},{n:"Caratinga, MG",c:"Brasil",v:"-19.79,-42.14"},
+  {n:"Itajubá, MG",c:"Brasil",v:"-22.42,-45.45"},{n:"Frutal, MG",c:"Brasil",v:"-20.02,-48.94"},
+  {n:"Formiga, MG",c:"Brasil",v:"-20.46,-45.42"},{n:"Três Corações, MG",c:"Brasil",v:"-21.69,-45.26"},
+  {n:"Ouro Preto, MG",c:"Brasil",v:"-20.39,-43.50"},{n:"Diamantina, MG",c:"Brasil",v:"-18.24,-43.60"},
+  {n:"Cataguases, MG",c:"Brasil",v:"-21.38,-42.69"},{n:"São João del-Rei, MG",c:"Brasil",v:"-21.13,-44.26"},
+  {n:"Ituiutaba, MG",c:"Brasil",v:"-18.97,-49.47"},{n:"Vazante, MG",c:"Brasil",v:"-17.99,-46.91"},
+  {n:"Curvelo, MG",c:"Brasil",v:"-18.76,-44.43"},{n:"Paracatu, MG",c:"Brasil",v:"-17.22,-46.88"},
+  {n:"Manhuaçu, MG",c:"Brasil",v:"-20.26,-42.02"},{n:"Ponte Nova, MG",c:"Brasil",v:"-20.42,-42.91"},
+  {n:"Campos Gerais, MG",c:"Brasil",v:"-21.23,-45.75"},{n:"São Sebastião do Paraíso, MG",c:"Brasil",v:"-20.92,-46.99"},
+  // PARÁ
+  {n:"Belém, PA",c:"Brasil",v:"-1.46,-48.50"},{n:"Ananindeua, PA",c:"Brasil",v:"-1.37,-48.37"},
+  {n:"Santarém, PA",c:"Brasil",v:"-2.44,-54.71"},{n:"Marabá, PA",c:"Brasil",v:"-5.36,-49.12"},
+  {n:"Castanhal, PA",c:"Brasil",v:"-1.29,-47.92"},{n:"Parauapebas, PA",c:"Brasil",v:"-6.07,-49.90"},
+  {n:"Cametá, PA",c:"Brasil",v:"-2.25,-49.50"},{n:"Abaetetuba, PA",c:"Brasil",v:"-1.72,-48.88"},
+  {n:"Bragança, PA",c:"Brasil",v:"-1.05,-46.77"},{n:"Altamira, PA",c:"Brasil",v:"-3.20,-52.21"},
+  {n:"Redenção, PA",c:"Brasil",v:"-8.03,-50.03"},{n:"Tucuruí, PA",c:"Brasil",v:"-3.76,-49.67"},
+  {n:"Itaituba, PA",c:"Brasil",v:"-4.28,-55.99"},{n:"Barcarena, PA",c:"Brasil",v:"-1.50,-48.62"},
+  {n:"Paragominas, PA",c:"Brasil",v:"-2.99,-47.35"},{n:"Salinópolis, PA",c:"Brasil",v:"-0.62,-47.36"},
+  {n:"Conceição do Araguaia, PA",c:"Brasil",v:"-8.26,-49.26"},{n:"Tomé-Açu, PA",c:"Brasil",v:"-2.42,-48.16"},
+  {n:"Capanema, PA",c:"Brasil",v:"-1.19,-47.18"},{n:"Breves, PA",c:"Brasil",v:"-1.68,-50.48"},
+  {n:"Tailândia, PA",c:"Brasil",v:"-2.94,-48.95"},{n:"Moju, PA",c:"Brasil",v:"-1.89,-48.77"},
+  {n:"Benevides, PA",c:"Brasil",v:"-1.36,-48.24"},{n:"Igarapé-Miri, PA",c:"Brasil",v:"-1.98,-49.00"},
+  {n:"Dom Eliseu, PA",c:"Brasil",v:"-4.29,-47.49"},{n:"Ourilândia do Norte, PA",c:"Brasil",v:"-6.75,-51.09"},
+  {n:"Novo Repartimento, PA",c:"Brasil",v:"-4.26,-49.97"},{n:"São Félix do Xingu, PA",c:"Brasil",v:"-6.64,-51.99"},
+  {n:"Agua Azul do Norte, PA",c:"Brasil",v:"-6.78,-50.61"},{n:"Pau D'Arco, PA",c:"Brasil",v:"-7.53,-49.39"},
+  {n:"Xinguara, PA",c:"Brasil",v:"-7.10,-49.94"},{n:"Rio Maria, PA",c:"Brasil",v:"-7.31,-50.04"},
+  {n:"Bannach, PA",c:"Brasil",v:"-7.54,-50.44"},{n:"Sapucaia, PA",c:"Brasil",v:"-6.97,-50.90"},
+  {n:"Eldorado dos Carajás, PA",c:"Brasil",v:"-6.11,-49.35"},{n:"Curionópolis, PA",c:"Brasil",v:"-6.12,-49.60"},
+  {n:"São Geraldo do Araguaia, PA",c:"Brasil",v:"-6.40,-48.55"},{n:"Piçarra, PA",c:"Brasil",v:"-6.44,-48.81"},
+  {n:"Bom Jesus do Tocantins, PA",c:"Brasil",v:"-5.73,-48.47"},{n:"Abel Figueiredo, PA",c:"Brasil",v:"-4.95,-48.39"},
+  {n:"Rondon do Pará, PA",c:"Brasil",v:"-4.78,-48.07"},{n:"Goianésia do Pará, PA",c:"Brasil",v:"-3.84,-49.05"},
+  {n:"Jacundá, PA",c:"Brasil",v:"-4.44,-49.11"},{n:"Nova Ipixuna, PA",c:"Brasil",v:"-4.98,-49.20"},
+  {n:"Pacajá, PA",c:"Brasil",v:"-3.84,-50.64"},{n:"Uruará, PA",c:"Brasil",v:"-3.71,-53.74"},
+  {n:"Medicilândia, PA",c:"Brasil",v:"-3.46,-52.88"},{n:"Brasil Novo, PA",c:"Brasil",v:"-3.28,-52.59"},
+  {n:"Senador José Porfírio, PA",c:"Brasil",v:"-2.59,-51.95"},{n:"Anapu, PA",c:"Brasil",v:"-3.47,-51.19"},
+  {n:"Vitória do Xingu, PA",c:"Brasil",v:"-2.88,-52.00"},{n:"Porto de Moz, PA",c:"Brasil",v:"-1.74,-52.24"},
+  {n:"Almeirim, PA",c:"Brasil",v:"-1.52,-52.58"},{n:"Monte Alegre, PA",c:"Brasil",v:"-2.01,-54.07"},
+  {n:"Óbidos, PA",c:"Brasil",v:"-1.91,-55.52"},{n:"Oriximiná, PA",c:"Brasil",v:"-1.77,-55.86"},
+  {n:"Faro, PA",c:"Brasil",v:"-2.18,-56.74"},{n:"Terra Santa, PA",c:"Brasil",v:"-2.10,-56.48"},
+  {n:"Alenquer, PA",c:"Brasil",v:"-1.94,-54.74"},{n:"Prainha, PA",c:"Brasil",v:"-1.79,-53.48"},
+  {n:"Curuá, PA",c:"Brasil",v:"-1.89,-54.27"},{n:"Mojuí dos Campos, PA",c:"Brasil",v:"-2.68,-54.64"},
+  {n:"Aveiro, PA",c:"Brasil",v:"-3.60,-55.32"},{n:"Rurópolis, PA",c:"Brasil",v:"-4.11,-54.86"},
+  {n:"Trairão, PA",c:"Brasil",v:"-4.73,-55.96"},{n:"Jacareacanga, PA",c:"Brasil",v:"-6.22,-57.77"},
+  {n:"Novo Progresso, PA",c:"Brasil",v:"-7.12,-55.38"},{n:"Castelo dos Sonhos, PA",c:"Brasil",v:"-8.20,-55.05"},
+  {n:"Placas, PA",c:"Brasil",v:"-3.86,-54.23"},{n:"Acará, PA",c:"Brasil",v:"-1.96,-48.20"},
+  {n:"Concórdia do Pará, PA",c:"Brasil",v:"-2.00,-47.97"},{n:"Tomé Açu, PA",c:"Brasil",v:"-2.42,-48.16"},
+  {n:"Inhangapi, PA",c:"Brasil",v:"-1.37,-47.91"},{n:"Santa Isabel do Pará, PA",c:"Brasil",v:"-1.30,-48.16"},
+  {n:"Vigia, PA",c:"Brasil",v:"-0.86,-48.14"},{n:"Colares, PA",c:"Brasil",v:"-0.95,-48.30"},
+  {n:"São Caetano de Odivelas, PA",c:"Brasil",v:"-0.75,-48.02"},{n:"Terra Alta, PA",c:"Brasil",v:"-1.08,-47.96"},
+  {n:"Curuçá, PA",c:"Brasil",v:"-0.73,-47.85"},{n:"Maracanã, PA",c:"Brasil",v:"-0.77,-47.46"},
+  {n:"São João de Pirabas, PA",c:"Brasil",v:"-0.76,-47.18"},{n:"Primavera, PA",c:"Brasil",v:"-0.94,-47.10"},
+  {n:"Marapanim, PA",c:"Brasil",v:"-0.72,-47.70"},{n:"Magalhães Barata, PA",c:"Brasil",v:"-0.81,-47.57"},
+  {n:"Peixe-Boi, PA",c:"Brasil",v:"-1.19,-47.33"},{n:"São Francisco do Pará, PA",c:"Brasil",v:"-1.33,-47.61"},
+  {n:"Augusto Corrêa, PA",c:"Brasil",v:"-1.27,-46.63"},{n:"Viseu, PA",c:"Brasil",v:"-1.19,-46.14"},
+  {n:"Tracuateua, PA",c:"Brasil",v:"-1.07,-46.90"},{n:"Ourém, PA",c:"Brasil",v:"-1.55,-47.11"},
+  {n:"Garrafão do Norte, PA",c:"Brasil",v:"-1.94,-46.43"},{n:"São Domingos do Capim, PA",c:"Brasil",v:"-1.69,-47.77"},
+  {n:"Irituia, PA",c:"Brasil",v:"-1.77,-47.44"},{n:"Ipixuna do Pará, PA",c:"Brasil",v:"-2.56,-47.50"},
+  {n:"Nova Esperança do Piriá, PA",c:"Brasil",v:"-2.35,-46.55"},{n:"Aurora do Pará, PA",c:"Brasil",v:"-2.14,-47.56"},
+  {n:"Paragominas, PA",c:"Brasil",v:"-2.99,-47.35"},{n:"Ulianópolis, PA",c:"Brasil",v:"-3.74,-47.50"},
+  {n:"Mãe do Rio, PA",c:"Brasil",v:"-2.06,-47.59"},{n:"Santana do Araguaia, PA",c:"Brasil",v:"-9.83,-50.33"},
+  {n:"Santa Maria das Barreiras, PA",c:"Brasil",v:"-8.87,-49.74"},{n:"Cumaru do Norte, PA",c:"Brasil",v:"-8.91,-51.22"},
+  // PARAÍBA
+  {n:"João Pessoa, PB",c:"Brasil",v:"-7.12,-34.86"},{n:"Campina Grande, PB",c:"Brasil",v:"-7.23,-35.88"},
+  {n:"Santa Rita, PB",c:"Brasil",v:"-7.12,-34.98"},{n:"Bayeux, PB",c:"Brasil",v:"-7.12,-34.94"},
+  {n:"Sousa, PB",c:"Brasil",v:"-6.76,-38.23"},{n:"Caruaru, PB",c:"Brasil",v:"-7.23,-35.98"},
+  {n:"Patos, PB",c:"Brasil",v:"-7.02,-37.28"},{n:"Guarabira, PB",c:"Brasil",v:"-6.85,-35.49"},
+  {n:"Cajazeiras, PB",c:"Brasil",v:"-6.89,-38.56"},{n:"Queimadas, PB",c:"Brasil",v:"-7.36,-35.90"},
+  {n:"Cabedelo, PB",c:"Brasil",v:"-6.98,-34.83"},{n:"Esperança, PB",c:"Brasil",v:"-7.03,-35.86"},
+  {n:"Itabaiana, PB",c:"Brasil",v:"-7.33,-35.33"},{n:"Pombal, PB",c:"Brasil",v:"-6.77,-37.80"},
+  {n:"Mamanguape, PB",c:"Brasil",v:"-6.84,-35.13"},{n:"Monteiro, PB",c:"Brasil",v:"-7.89,-37.12"},
+  {n:"Itaporanga, PB",c:"Brasil",v:"-7.30,-38.16"},{n:"Picuí, PB",c:"Brasil",v:"-6.55,-36.34"},
+  {n:"Princesa Isabel, PB",c:"Brasil",v:"-7.73,-37.99"},{n:"Areia, PB",c:"Brasil",v:"-6.96,-35.70"},
+  {n:"Solânea, PB",c:"Brasil",v:"-6.76,-35.66"},{n:"Bananeiras, PB",c:"Brasil",v:"-6.75,-35.63"},
+  {n:"Sapé, PB",c:"Brasil",v:"-7.09,-35.23"},{n:"Sumé, PB",c:"Brasil",v:"-7.66,-36.88"},
+  {n:"Catolé do Rocha, PB",c:"Brasil",v:"-6.34,-37.74"},{n:"Lagoa Seca, PB",c:"Brasil",v:"-7.18,-35.85"},
+  // PARANÁ
+  {n:"Curitiba, PR",c:"Brasil",v:"-25.43,-49.27"},{n:"Londrina, PR",c:"Brasil",v:"-23.30,-51.17"},
+  {n:"Maringá, PR",c:"Brasil",v:"-23.42,-51.94"},{n:"Ponta Grossa, PR",c:"Brasil",v:"-25.10,-50.16"},
+  {n:"Cascavel, PR",c:"Brasil",v:"-24.96,-53.46"},{n:"São José dos Pinhais, PR",c:"Brasil",v:"-25.53,-49.21"},
+  {n:"Foz do Iguaçu, PR",c:"Brasil",v:"-25.52,-54.59"},{n:"Colombo, PR",c:"Brasil",v:"-25.30,-49.22"},
+  {n:"Guarapuava, PR",c:"Brasil",v:"-25.39,-51.46"},{n:"Paranaguá, PR",c:"Brasil",v:"-25.52,-48.51"},
+  {n:"Araucária, PR",c:"Brasil",v:"-25.59,-49.41"},{n:"Toledo, PR",c:"Brasil",v:"-24.72,-53.74"},
+  {n:"Apucarana, PR",c:"Brasil",v:"-23.55,-51.46"},{n:"Pinhais, PR",c:"Brasil",v:"-25.44,-49.19"},
+  {n:"Campo Largo, PR",c:"Brasil",v:"-25.46,-49.53"},{n:"Arapongas, PR",c:"Brasil",v:"-23.41,-51.43"},
+  {n:"Almirante Tamandaré, PR",c:"Brasil",v:"-25.32,-49.31"},{n:"Umuarama, PR",c:"Brasil",v:"-23.77,-53.33"},
+  {n:"Cambé, PR",c:"Brasil",v:"-23.28,-51.28"},{n:"Caxambu do Sul, PR",c:"Brasil",v:"-26.41,-52.79"},
+  {n:"Sarandi, PR",c:"Brasil",v:"-23.44,-51.87"},{n:"Campo Mourão, PR",c:"Brasil",v:"-24.05,-52.38"},
+  {n:"Francisco Beltrão, PR",c:"Brasil",v:"-26.08,-53.05"},{n:"Fazenda Rio Grande, PR",c:"Brasil",v:"-25.66,-49.31"},
+  {n:"Pato Branco, PR",c:"Brasil",v:"-26.22,-52.67"},{n:"Paranavaí, PR",c:"Brasil",v:"-23.07,-52.47"},
+  {n:"Telêmaco Borba, PR",c:"Brasil",v:"-24.32,-50.62"},{n:"Cianorte, PR",c:"Brasil",v:"-23.66,-52.60"},
+  {n:"Medianeira, PR",c:"Brasil",v:"-25.30,-54.10"},{n:"Rolândia, PR",c:"Brasil",v:"-23.31,-51.37"},
+  {n:"Irati, PR",c:"Brasil",v:"-25.47,-50.65"},{n:"União da Vitória, PR",c:"Brasil",v:"-26.23,-51.09"},
+  {n:"Cornélio Procópio, PR",c:"Brasil",v:"-23.18,-50.64"},{n:"Bandeirantes, PR",c:"Brasil",v:"-23.11,-50.37"},
+  {n:"Marechal Cândido Rondon, PR",c:"Brasil",v:"-24.55,-54.06"},{n:"Faxinal, PR",c:"Brasil",v:"-24.00,-51.32"},
+  {n:"Jacarezinho, PR",c:"Brasil",v:"-23.16,-49.97"},{n:"Santo Antônio da Platina, PR",c:"Brasil",v:"-23.29,-50.07"},
+  {n:"Jandaia do Sul, PR",c:"Brasil",v:"-23.60,-51.64"},{n:"Mandaguari, PR",c:"Brasil",v:"-23.54,-51.67"},
+  {n:"Ivaiporã, PR",c:"Brasil",v:"-24.25,-51.68"},{n:"Quedas do Iguaçu, PR",c:"Brasil",v:"-25.45,-53.00"},
+  {n:"Ibiporã, PR",c:"Brasil",v:"-23.27,-51.04"},{n:"Astorga, PR",c:"Brasil",v:"-23.23,-51.66"},
+  {n:"Dois Vizinhos, PR",c:"Brasil",v:"-25.75,-53.06"},{n:"Capanema, PR",c:"Brasil",v:"-25.67,-53.80"},
+  {n:"Palmas, PR",c:"Brasil",v:"-26.48,-51.99"},{n:"Laranjeiras do Sul, PR",c:"Brasil",v:"-25.41,-52.41"},
+  // PERNAMBUCO
+  {n:"Recife, PE",c:"Brasil",v:"-8.05,-34.88"},{n:"Olinda, PE",c:"Brasil",v:"-7.99,-34.85"},
+  {n:"Caruaru, PE",c:"Brasil",v:"-8.28,-35.98"},{n:"Petrolina, PE",c:"Brasil",v:"-9.39,-40.50"},
+  {n:"Paulista, PE",c:"Brasil",v:"-7.92,-34.87"},{n:"Jaboatão dos Guararapes, PE",c:"Brasil",v:"-8.17,-35.01"},
+  {n:"Cabo de Santo Agostinho, PE",c:"Brasil",v:"-8.29,-35.04"},{n:"Caruaru, PE",c:"Brasil",v:"-8.28,-35.98"},
+  {n:"Vitória de Santo Antão, PE",c:"Brasil",v:"-8.12,-35.30"},{n:"Garanhuns, PE",c:"Brasil",v:"-8.89,-36.49"},
+  {n:"Ipojuca, PE",c:"Brasil",v:"-8.40,-35.07"},{n:"Santa Cruz do Capibaribe, PE",c:"Brasil",v:"-7.95,-36.20"},
+  {n:"Camaçari, PE",c:"Brasil",v:"-7.85,-34.90"},{n:"Serra Talhada, PE",c:"Brasil",v:"-7.99,-38.30"},
+  {n:"Goiana, PE",c:"Brasil",v:"-7.56,-35.00"},{n:"São Lourenço da Mata, PE",c:"Brasil",v:"-8.01,-35.05"},
+  {n:"Camaragibe, PE",c:"Brasil",v:"-8.02,-35.00"},{n:"Abreu e Lima, PE",c:"Brasil",v:"-7.91,-34.90"},
+  {n:"Caetés, PE",c:"Brasil",v:"-8.78,-36.63"},{n:"Salgueiro, PE",c:"Brasil",v:"-8.07,-39.13"},
+  {n:"Araripina, PE",c:"Brasil",v:"-7.57,-40.49"},{n:"Ouricuri, PE",c:"Brasil",v:"-7.88,-40.09"},
+  {n:"Buíque, PE",c:"Brasil",v:"-8.62,-37.16"},{n:"Pesqueira, PE",c:"Brasil",v:"-8.36,-36.70"},
+  {n:"Belo Jardim, PE",c:"Brasil",v:"-8.34,-36.43"},{n:"Paudalho, PE",c:"Brasil",v:"-7.90,-35.18"},
+  {n:"Carpina, PE",c:"Brasil",v:"-7.84,-35.26"},{n:"Surubim, PE",c:"Brasil",v:"-7.85,-35.76"},
+  {n:"Limoeiro, PE",c:"Brasil",v:"-7.87,-35.45"},{n:"Timbaúba, PE",c:"Brasil",v:"-7.50,-35.32"},
+  // PIAUÍ
+  {n:"Teresina, PI",c:"Brasil",v:"-4.27,-42.07"},{n:"Parnaíba, PI",c:"Brasil",v:"-2.91,-41.77"},
+  {n:"Picos, PI",c:"Brasil",v:"-7.08,-41.47"},{n:"Piripiri, PI",c:"Brasil",v:"-4.27,-41.78"},
+  {n:"Floriano, PI",c:"Brasil",v:"-6.77,-43.02"},{n:"Campo Maior, PI",c:"Brasil",v:"-4.83,-42.17"},
+  {n:"Barras, PI",c:"Brasil",v:"-4.24,-42.30"},{n:"Oeiras, PI",c:"Brasil",v:"-7.02,-42.13"},
+  {n:"José de Freitas, PI",c:"Brasil",v:"-4.76,-42.58"},{n:"Pedro II, PI",c:"Brasil",v:"-4.43,-41.46"},
+  {n:"União, PI",c:"Brasil",v:"-4.59,-42.86"},{n:"São Raimundo Nonato, PI",c:"Brasil",v:"-9.01,-42.69"},
+  {n:"Canto do Buriti, PI",c:"Brasil",v:"-8.11,-42.95"},{n:"Corrente, PI",c:"Brasil",v:"-10.43,-45.16"},
+  {n:"Bom Jesus, PI",c:"Brasil",v:"-9.07,-44.37"},{n:"Uruçuí, PI",c:"Brasil",v:"-7.23,-44.55"},
+  {n:"Altos, PI",c:"Brasil",v:"-5.04,-42.46"},{n:"Piracuruca, PI",c:"Brasil",v:"-3.93,-41.71"},
+  // RIO DE JANEIRO
+  {n:"Rio de Janeiro, RJ",c:"Brasil",v:"-22.91,-43.17"},{n:"São Gonçalo, RJ",c:"Brasil",v:"-22.83,-43.05"},
+  {n:"Duque de Caxias, RJ",c:"Brasil",v:"-22.78,-43.31"},{n:"Nova Iguaçu, RJ",c:"Brasil",v:"-22.76,-43.45"},
+  {n:"Niterói, RJ",c:"Brasil",v:"-22.88,-43.10"},{n:"Belford Roxo, RJ",c:"Brasil",v:"-22.76,-43.40"},
+  {n:"São João de Meriti, RJ",c:"Brasil",v:"-22.80,-43.37"},{n:"Campos dos Goytacazes, RJ",c:"Brasil",v:"-21.76,-41.33"},
+  {n:"Petrópolis, RJ",c:"Brasil",v:"-22.51,-43.18"},{n:"Volta Redonda, RJ",c:"Brasil",v:"-22.52,-44.10"},
+  {n:"Magé, RJ",c:"Brasil",v:"-22.66,-43.04"},{n:"Itaboraí, RJ",c:"Brasil",v:"-22.74,-42.86"},
+  {n:"Mesquita, RJ",c:"Brasil",v:"-22.80,-43.44"},{n:"Nilópolis, RJ",c:"Brasil",v:"-22.81,-43.42"},
+  {n:"Queimados, RJ",c:"Brasil",v:"-22.72,-43.56"},{n:"Macaé, RJ",c:"Brasil",v:"-22.37,-41.79"},
+  {n:"Cabo Frio, RJ",c:"Brasil",v:"-22.89,-42.02"},{n:"Angra dos Reis, RJ",c:"Brasil",v:"-23.01,-44.32"},
+  {n:"Resende, RJ",c:"Brasil",v:"-22.47,-44.45"},{n:"Barra Mansa, RJ",c:"Brasil",v:"-22.54,-44.17"},
+  {n:"Teresópolis, RJ",c:"Brasil",v:"-22.41,-42.99"},{n:"Nova Friburgo, RJ",c:"Brasil",v:"-22.28,-42.53"},
+  {n:"Itaguaí, RJ",c:"Brasil",v:"-22.86,-43.79"},{n:"Araruama, RJ",c:"Brasil",v:"-22.87,-42.34"},
+  {n:"Rio das Ostras, RJ",c:"Brasil",v:"-22.53,-41.95"},{n:"São Pedro da Aldeia, RJ",c:"Brasil",v:"-22.84,-42.10"},
+  {n:"Três Rios, RJ",c:"Brasil",v:"-22.12,-43.21"},{n:"Valença, RJ",c:"Brasil",v:"-22.25,-43.70"},
+  {n:"Barra do Piraí, RJ",c:"Brasil",v:"-22.47,-43.83"},{n:"Japeri, RJ",c:"Brasil",v:"-22.64,-43.66"},
+  {n:"Maricá, RJ",c:"Brasil",v:"-22.92,-42.82"},{n:"Saquarema, RJ",c:"Brasil",v:"-22.92,-42.51"},
+  {n:"Itaperuna, RJ",c:"Brasil",v:"-21.21,-41.89"},{n:"Miracema, RJ",c:"Brasil",v:"-21.41,-42.20"},
+  {n:"São Fidélis, RJ",c:"Brasil",v:"-21.64,-41.74"},{n:"Bom Jesus do Itabapoana, RJ",c:"Brasil",v:"-21.13,-41.68"},
+  {n:"Paraty, RJ",c:"Brasil",v:"-23.22,-44.72"},{n:"Mangaratiba, RJ",c:"Brasil",v:"-22.96,-44.04"},
+  // RIO GRANDE DO NORTE
+  {n:"Natal, RN",c:"Brasil",v:"-5.79,-35.21"},{n:"Mossoró, RN",c:"Brasil",v:"-5.19,-37.34"},
+  {n:"Parnamirim, RN",c:"Brasil",v:"-5.92,-35.26"},{n:"São Gonçalo do Amarante, RN",c:"Brasil",v:"-5.79,-35.33"},
+  {n:"Macaíba, RN",c:"Brasil",v:"-5.86,-35.35"},{n:"Ceará-Mirim, RN",c:"Brasil",v:"-5.64,-35.42"},
+  {n:"Caicó, RN",c:"Brasil",v:"-6.46,-37.10"},{n:"Açu, RN",c:"Brasil",v:"-5.58,-36.91"},
+  {n:"Nova Cruz, RN",c:"Brasil",v:"-6.47,-35.44"},{n:"Santa Cruz, RN",c:"Brasil",v:"-6.23,-35.83"},
+  {n:"Currais Novos, RN",c:"Brasil",v:"-6.26,-36.52"},{n:"Pau dos Ferros, RN",c:"Brasil",v:"-6.11,-38.20"},
+  {n:"João Câmara, RN",c:"Brasil",v:"-5.54,-35.82"},{n:"Areia Branca, RN",c:"Brasil",v:"-4.95,-37.12"},
+  {n:"Lajes, RN",c:"Brasil",v:"-5.69,-36.24"},{n:"Apodi, RN",c:"Brasil",v:"-5.66,-37.80"},
+  {n:"Portalegre, RN",c:"Brasil",v:"-6.02,-37.98"},{n:"Angicos, RN",c:"Brasil",v:"-5.66,-36.60"},
+  // RIO GRANDE DO SUL
+  {n:"Porto Alegre, RS",c:"Brasil",v:"-30.03,-51.23"},{n:"Caxias do Sul, RS",c:"Brasil",v:"-29.17,-51.18"},
+  {n:"Canoas, RS",c:"Brasil",v:"-29.92,-51.18"},{n:"Pelotas, RS",c:"Brasil",v:"-31.77,-52.34"},
+  {n:"Santa Maria, RS",c:"Brasil",v:"-29.69,-53.81"},{n:"Gravataí, RS",c:"Brasil",v:"-29.94,-50.99"},
+  {n:"Viamão, RS",c:"Brasil",v:"-30.08,-51.02"},{n:"Novo Hamburgo, RS",c:"Brasil",v:"-29.68,-51.13"},
+  {n:"São Leopoldo, RS",c:"Brasil",v:"-29.75,-51.15"},{n:"Rio Grande, RS",c:"Brasil",v:"-32.03,-52.10"},
+  {n:"Alvorada, RS",c:"Brasil",v:"-29.99,-51.08"},{n:"Passo Fundo, RS",c:"Brasil",v:"-28.26,-52.41"},
+  {n:"Sapucaia do Sul, RS",c:"Brasil",v:"-29.83,-51.15"},{n:"Uruguaiana, RS",c:"Brasil",v:"-29.76,-57.08"},
+  {n:"Santa Cruz do Sul, RS",c:"Brasil",v:"-29.72,-52.43"},{n:"Bagé, RS",c:"Brasil",v:"-31.33,-54.10"},
+  {n:"Bento Gonçalves, RS",c:"Brasil",v:"-29.17,-51.52"},{n:"Erechim, RS",c:"Brasil",v:"-27.63,-52.27"},
+  {n:"Guaíba, RS",c:"Brasil",v:"-30.12,-51.33"},{n:"Cachoeirinha, RS",c:"Brasil",v:"-29.95,-51.10"},
+  {n:"Sapiranga, RS",c:"Brasil",v:"-29.64,-51.00"},{n:"Santo Ângelo, RS",c:"Brasil",v:"-28.30,-54.26"},
+  {n:"Alegrete, RS",c:"Brasil",v:"-29.79,-55.80"},{n:"Ijuí, RS",c:"Brasil",v:"-28.39,-53.91"},
+  {n:"Lajeado, RS",c:"Brasil",v:"-29.47,-51.96"},{n:"São Borja, RS",c:"Brasil",v:"-28.66,-55.97"},
+  {n:"Farroupilha, RS",c:"Brasil",v:"-29.22,-51.35"},{n:"Santana do Livramento, RS",c:"Brasil",v:"-30.89,-55.53"},
+  {n:"Cachoeira do Sul, RS",c:"Brasil",v:"-30.04,-52.89"},{n:"Camaquã, RS",c:"Brasil",v:"-30.85,-51.81"},
+  {n:"Cruz Alta, RS",c:"Brasil",v:"-28.64,-53.61"},{n:"Frederico Westphalen, RS",c:"Brasil",v:"-27.36,-53.40"},
+  {n:"Panambi, RS",c:"Brasil",v:"-28.30,-53.50"},{n:"Vacaria, RS",c:"Brasil",v:"-28.51,-50.93"},
+  {n:"Charqueadas, RS",c:"Brasil",v:"-29.96,-51.62"},{n:"Três Passos, RS",c:"Brasil",v:"-27.46,-53.93"},
+  {n:"Tapejara, RS",c:"Brasil",v:"-28.06,-52.02"},{n:"Veranópolis, RS",c:"Brasil",v:"-28.93,-51.55"},
+  {n:"Taquara, RS",c:"Brasil",v:"-29.65,-50.78"},{n:"Campo Bom, RS",c:"Brasil",v:"-29.68,-51.05"},
+  {n:"Dois Irmãos, RS",c:"Brasil",v:"-29.58,-51.09"},{n:"Estância Velha, RS",c:"Brasil",v:"-29.65,-51.18"},
+  {n:"Igrejinha, RS",c:"Brasil",v:"-29.57,-50.79"},{n:"São Lourenço do Sul, RS",c:"Brasil",v:"-31.36,-51.98"},
+  {n:"Três de Maio, RS",c:"Brasil",v:"-27.78,-54.24"},{n:"Santa Rosa, RS",c:"Brasil",v:"-27.87,-54.48"},
+  {n:"Palmeira das Missões, RS",c:"Brasil",v:"-27.90,-53.31"},{n:"Giruá, RS",c:"Brasil",v:"-28.03,-54.35"},
+  // RONDÔNIA
+  {n:"Porto Velho, RO",c:"Brasil",v:"-8.77,-63.91"},{n:"Ji-Paraná, RO",c:"Brasil",v:"-10.89,-61.95"},
+  {n:"Ariquemes, RO",c:"Brasil",v:"-9.91,-63.04"},{n:"Vilhena, RO",c:"Brasil",v:"-12.74,-60.15"},
+  {n:"Cacoal, RO",c:"Brasil",v:"-11.44,-61.45"},{n:"Rolim de Moura, RO",c:"Brasil",v:"-11.73,-61.78"},
+  {n:"Jaru, RO",c:"Brasil",v:"-10.43,-62.47"},{n:"Guajará-Mirim, RO",c:"Brasil",v:"-10.78,-65.34"},
+  {n:"Ouro Preto do Oeste, RO",c:"Brasil",v:"-10.73,-62.27"},{n:"Pimenta Bueno, RO",c:"Brasil",v:"-11.68,-61.19"},
+  {n:"Espigão do Oeste, RO",c:"Brasil",v:"-11.52,-60.90"},{n:"Presidente Médici, RO",c:"Brasil",v:"-11.18,-61.90"},
+  // RORAIMA
+  {n:"Boa Vista, RR",c:"Brasil",v:"2.82,-60.67"},{n:"Caracaraí, RR",c:"Brasil",v:"1.82,-61.13"},
+  {n:"Rorainópolis, RR",c:"Brasil",v:"0.95,-60.43"},{n:"Mucajaí, RR",c:"Brasil",v:"2.45,-60.92"},
+  {n:"Alto Alegre, RR",c:"Brasil",v:"2.99,-61.31"},{n:"Pacaraima, RR",c:"Brasil",v:"4.47,-61.15"},
+  {n:"Amajari, RR",c:"Brasil",v:"3.72,-61.43"},{n:"Bonfim, RR",c:"Brasil",v:"3.35,-59.83"},
+  {n:"Cantá, RR",c:"Brasil",v:"2.42,-60.58"},{n:"Iracema, RR",c:"Brasil",v:"1.98,-61.59"},
+  {n:"Caroebe, RR",c:"Brasil",v:"0.88,-59.52"},{n:"São Luiz, RR",c:"Brasil",v:"0.55,-60.03"},
+  {n:"São João da Baliza, RR",c:"Brasil",v:"0.95,-59.90"},{n:"Uiramutã, RR",c:"Brasil",v:"4.58,-60.54"},
+  {n:"Normandia, RR",c:"Brasil",v:"3.88,-59.62"},
+  // SANTA CATARINA
+  {n:"Florianópolis, SC",c:"Brasil",v:"-27.60,-48.55"},{n:"Joinville, SC",c:"Brasil",v:"-26.30,-48.85"},
+  {n:"Blumenau, SC",c:"Brasil",v:"-26.91,-49.07"},{n:"São José, SC",c:"Brasil",v:"-27.61,-48.64"},
+  {n:"Criciúma, SC",c:"Brasil",v:"-28.68,-49.37"},{n:"Chapecó, SC",c:"Brasil",v:"-27.10,-52.62"},
+  {n:"Itajaí, SC",c:"Brasil",v:"-26.91,-48.66"},{n:"Jaraguá do Sul, SC",c:"Brasil",v:"-26.49,-49.07"},
+  {n:"Palhoça, SC",c:"Brasil",v:"-27.65,-48.67"},{n:"Balneário Camboriú, SC",c:"Brasil",v:"-26.99,-48.64"},
+  {n:"Lages, SC",c:"Brasil",v:"-27.82,-50.33"},{n:"Brusque, SC",c:"Brasil",v:"-27.10,-48.92"},
+  {n:"Tubarão, SC",c:"Brasil",v:"-28.47,-49.01"},{n:"Caçador, SC",c:"Brasil",v:"-26.78,-51.01"},
+  {n:"Concórdia, SC",c:"Brasil",v:"-27.24,-52.03"},{n:"Camboriú, SC",c:"Brasil",v:"-27.02,-48.65"},
+  {n:"Navegantes, SC",c:"Brasil",v:"-26.90,-48.66"},{n:"Gaspar, SC",c:"Brasil",v:"-26.93,-48.96"},
+  {n:"Indaial, SC",c:"Brasil",v:"-26.90,-49.23"},{n:"Mafra, SC",c:"Brasil",v:"-26.12,-49.80"},
+  {n:"Rio do Sul, SC",c:"Brasil",v:"-27.21,-49.64"},{n:"São Bento do Sul, SC",c:"Brasil",v:"-26.25,-49.38"},
+  {n:"Içara, SC",c:"Brasil",v:"-28.71,-49.31"},{n:"Araranguá, SC",c:"Brasil",v:"-28.93,-49.49"},
+  {n:"Xanxerê, SC",c:"Brasil",v:"-26.88,-52.40"},{n:"Joaçaba, SC",c:"Brasil",v:"-27.18,-51.51"},
+  {n:"São Miguel do Oeste, SC",c:"Brasil",v:"-26.73,-53.52"},{n:"Fraiburgo, SC",c:"Brasil",v:"-27.02,-50.92"},
+  {n:"Videira, SC",c:"Brasil",v:"-27.01,-51.16"},{n:"Canoinhas, SC",c:"Brasil",v:"-26.18,-50.39"},
+  // SÃO PAULO
+  {n:"São Paulo, SP",c:"Brasil",v:"-23.55,-46.63"},{n:"Guarulhos, SP",c:"Brasil",v:"-23.53,-46.18"},
+  {n:"Campinas, SP",c:"Brasil",v:"-22.74,-47.33"},{n:"São Bernardo do Campo, SP",c:"Brasil",v:"-23.69,-46.56"},
+  {n:"Santo André, SP",c:"Brasil",v:"-23.65,-46.53"},{n:"São José dos Campos, SP",c:"Brasil",v:"-23.18,-45.88"},
+  {n:"Osasco, SP",c:"Brasil",v:"-23.53,-46.79"},{n:"Sorocaba, SP",c:"Brasil",v:"-23.50,-47.46"},
+  {n:"Ribeirão Preto, SP",c:"Brasil",v:"-21.17,-47.81"},{n:"Mauá, SP",c:"Brasil",v:"-23.67,-46.46"},
+  {n:"Santos, SP",c:"Brasil",v:"-23.96,-46.33"},{n:"São José do Rio Preto, SP",c:"Brasil",v:"-20.81,-49.38"},
+  {n:"Mogi das Cruzes, SP",c:"Brasil",v:"-23.52,-46.19"},{n:"Diadema, SP",c:"Brasil",v:"-23.68,-46.62"},
+  {n:"Jundiaí, SP",c:"Brasil",v:"-23.19,-46.88"},{n:"Piracicaba, SP",c:"Brasil",v:"-22.73,-47.65"},
+  {n:"Carapicuíba, SP",c:"Brasil",v:"-23.52,-46.84"},{n:"Bauru, SP",c:"Brasil",v:"-22.32,-49.07"},
+  {n:"São Vicente, SP",c:"Brasil",v:"-23.96,-46.39"},{n:"Itaquaquecetuba, SP",c:"Brasil",v:"-23.49,-46.35"},
+  {n:"Franca, SP",c:"Brasil",v:"-20.54,-47.40"},{n:"Praia Grande, SP",c:"Brasil",v:"-24.01,-46.40"},
+  {n:"Guarujá, SP",c:"Brasil",v:"-23.99,-46.26"},{n:"Taubaté, SP",c:"Brasil",v:"-23.02,-45.56"},
+  {n:"Limeira, SP",c:"Brasil",v:"-22.56,-47.40"},{n:"Suzano, SP",c:"Brasil",v:"-23.54,-46.31"},
+  {n:"Sumaré, SP",c:"Brasil",v:"-22.82,-47.27"},{n:"Taboão da Serra, SP",c:"Brasil",v:"-23.60,-46.76"},
+  {n:"São Carlos, SP",c:"Brasil",v:"-22.01,-47.90"},{n:"Americana, SP",c:"Brasil",v:"-22.74,-47.33"},
+  {n:"Indaiatuba, SP",c:"Brasil",v:"-23.09,-47.22"},{n:"Araraquara, SP",c:"Brasil",v:"-21.79,-48.17"},
+  {n:"Presidente Prudente, SP",c:"Brasil",v:"-22.12,-51.39"},{n:"Rio Claro, SP",c:"Brasil",v:"-22.41,-47.57"},
+  {n:"Marília, SP",c:"Brasil",v:"-22.21,-49.95"},{n:"Maringá, SP",c:"Brasil",v:"-22.21,-47.82"},
+  {n:"Hortolândia, SP",c:"Brasil",v:"-22.86,-47.22"},{n:"Cotia, SP",c:"Brasil",v:"-23.60,-46.92"},
+  {n:"Ferraz de Vasconcelos, SP",c:"Brasil",v:"-23.54,-46.37"},{n:"Itapevi, SP",c:"Brasil",v:"-23.55,-47.07"},
+  {n:"Santa Bárbara d'Oeste, SP",c:"Brasil",v:"-22.75,-47.41"},{n:"Pindamonhangaba, SP",c:"Brasil",v:"-22.92,-45.46"},
+  {n:"Atibaia, SP",c:"Brasil",v:"-23.12,-46.55"},{n:"Araçatuba, SP",c:"Brasil",v:"-21.21,-50.43"},
+  {n:"Guaratinguetá, SP",c:"Brasil",v:"-22.82,-45.19"},{n:"Jacareí, SP",c:"Brasil",v:"-23.30,-45.97"},
+  {n:"Itu, SP",c:"Brasil",v:"-23.27,-47.30"},{n:"Botucatu, SP",c:"Brasil",v:"-22.88,-48.45"},
+  {n:"Ourinhos, SP",c:"Brasil",v:"-22.98,-49.87"},{n:"São Caetano do Sul, SP",c:"Brasil",v:"-23.62,-46.56"},
+  {n:"Catanduva, SP",c:"Brasil",v:"-21.14,-48.97"},{n:"Birigui, SP",c:"Brasil",v:"-21.28,-50.34"},
+  {n:"Lorena, SP",c:"Brasil",v:"-22.73,-45.12"},{n:"São João da Boa Vista, SP",c:"Brasil",v:"-21.97,-46.80"},
+  {n:"Votuporanga, SP",c:"Brasil",v:"-20.42,-49.97"},{n:"Caçapava, SP",c:"Brasil",v:"-23.10,-45.70"},
+  {n:"Lins, SP",c:"Brasil",v:"-21.68,-49.74"},{n:"Bragança Paulista, SP",c:"Brasil",v:"-22.95,-46.54"},
+  {n:"Itapecerica da Serra, SP",c:"Brasil",v:"-23.72,-46.85"},{n:"Itatiba, SP",c:"Brasil",v:"-23.00,-46.84"},
+  {n:"Presidente Venceslau, SP",c:"Brasil",v:"-21.88,-51.84"},{n:"Registro, SP",c:"Brasil",v:"-24.49,-47.84"},
+  {n:"Jaú, SP",c:"Brasil",v:"-22.30,-48.56"},{n:"Itapetininga, SP",c:"Brasil",v:"-23.59,-48.05"},
+  {n:"Barretos, SP",c:"Brasil",v:"-20.56,-48.56"},{n:"Mogi Guaçu, SP",c:"Brasil",v:"-22.37,-46.94"},
+  {n:"Araras, SP",c:"Brasil",v:"-22.36,-47.38"},{n:"Assis, SP",c:"Brasil",v:"-22.66,-50.41"},
+  {n:"Sertãozinho, SP",c:"Brasil",v:"-21.13,-47.99"},{n:"Amparo, SP",c:"Brasil",v:"-22.71,-46.77"},
+  {n:"Pedreira, SP",c:"Brasil",v:"-22.74,-46.90"},{n:"Votorantim, SP",c:"Brasil",v:"-23.54,-47.44"},
+  {n:"Poá, SP",c:"Brasil",v:"-23.53,-46.34"},{n:"Valinhos, SP",c:"Brasil",v:"-22.97,-47.00"},
+  {n:"Jandira, SP",c:"Brasil",v:"-23.53,-46.90"},{n:"Arujá, SP",c:"Brasil",v:"-23.40,-46.32"},
+  // SERGIPE
+  {n:"Aracaju, SE",c:"Brasil",v:"-10.91,-37.07"},{n:"Nossa Senhora do Socorro, SE",c:"Brasil",v:"-10.86,-37.13"},
+  {n:"São Cristóvão, SE",c:"Brasil",v:"-11.01,-37.21"},{n:"Lagarto, SE",c:"Brasil",v:"-10.92,-37.65"},
+  {n:"Itabaiana, SE",c:"Brasil",v:"-10.68,-37.43"},{n:"Estância, SE",c:"Brasil",v:"-11.27,-37.44"},
+  {n:"Tobias Barreto, SE",c:"Brasil",v:"-11.18,-38.00"},{n:"Simão Dias, SE",c:"Brasil",v:"-10.74,-37.81"},
+  {n:"Propriá, SE",c:"Brasil",v:"-10.22,-36.84"},{n:"Nossa Senhora da Glória, SE",c:"Brasil",v:"-10.22,-37.42"},
+  {n:"Itabi, SE",c:"Brasil",v:"-10.07,-37.17"},{n:"Poço Redondo, SE",c:"Brasil",v:"-9.81,-37.68"},
+  {n:"Canindé de São Francisco, SE",c:"Brasil",v:"-9.64,-37.79"},{n:"Carmópolis, SE",c:"Brasil",v:"-10.65,-36.99"},
+  {n:"Neópolis, SE",c:"Brasil",v:"-10.32,-36.58"},{n:"Japaratuba, SE",c:"Brasil",v:"-10.59,-36.95"},
+  // TOCANTINS
+  {n:"Palmas, TO",c:"Brasil",v:"-10.18,-48.33"},{n:"Araguaína, TO",c:"Brasil",v:"-7.19,-48.21"},
+  {n:"Gurupi, TO",c:"Brasil",v:"-11.73,-49.07"},{n:"Porto Nacional, TO",c:"Brasil",v:"-10.71,-48.42"},
+  {n:"Paraíso do Tocantins, TO",c:"Brasil",v:"-10.17,-48.88"},{n:"Colinas do Tocantins, TO",c:"Brasil",v:"-8.06,-48.48"},
+  {n:"Guaraí, TO",c:"Brasil",v:"-8.83,-48.51"},{n:"Tocantinópolis, TO",c:"Brasil",v:"-6.33,-47.42"},
+  {n:"Miracema do Tocantins, TO",c:"Brasil",v:"-9.57,-48.39"},{n:"Dianópolis, TO",c:"Brasil",v:"-11.62,-46.82"},
+  {n:"Formoso do Araguaia, TO",c:"Brasil",v:"-11.80,-49.53"},{n:"Pedro Afonso, TO",c:"Brasil",v:"-8.97,-48.18"},
+  {n:"Miranorte, TO",c:"Brasil",v:"-9.52,-48.59"},{n:"Augustinópolis, TO",c:"Brasil",v:"-5.47,-47.89"},
+  {n:"Wanderlândia, TO",c:"Brasil",v:"-6.84,-47.96"},{n:"Xambioá, TO",c:"Brasil",v:"-6.41,-48.53"},
+  {n:"Carolina do Tocantins, TO",c:"Brasil",v:"-7.33,-47.47"},{n:"Lagoa da Confusão, TO",c:"Brasil",v:"-10.79,-49.62"},
+  {n:"Cristalândia, TO",c:"Brasil",v:"-10.61,-49.19"},{n:"Pium, TO",c:"Brasil",v:"-10.45,-49.18"},
+  {n:"Almas, TO",c:"Brasil",v:"-11.57,-47.17"},{n:"Arraias, TO",c:"Brasil",v:"-12.93,-46.94"},
+  {n:"Natividade, TO",c:"Brasil",v:"-11.70,-47.72"},{n:"Taguatinga, TO",c:"Brasil",v:"-12.40,-46.45"},
+  // PORTUGAL
+  {n:"Lisboa",c:"Portugal",v:"38.72,-9.14"},{n:"Porto",c:"Portugal",v:"41.15,-8.61"},
+  {n:"Coimbra",c:"Portugal",v:"40.20,-8.41"},{n:"Braga",c:"Portugal",v:"41.54,-8.43"},
+  {n:"Faro",c:"Portugal",v:"37.02,-7.93"},{n:"Évora",c:"Portugal",v:"38.57,-7.91"},
+  {n:"Setúbal",c:"Portugal",v:"38.53,-8.89"},{n:"Aveiro",c:"Portugal",v:"40.64,-8.65"},
+  {n:"Viseu",c:"Portugal",v:"40.66,-7.91"},{n:"Viana do Castelo",c:"Portugal",v:"41.69,-8.82"},
+  {n:"Beja",c:"Portugal",v:"38.01,-7.86"},{n:"Leiria",c:"Portugal",v:"39.74,-8.81"},
+  {n:"Guimarães",c:"Portugal",v:"41.44,-8.29"},{n:"Funchal — Madeira",c:"Portugal",v:"32.66,-16.91"},
+  {n:"Ponta Delgada — Açores",c:"Portugal",v:"37.74,-25.67"},{n:"Angra do Heroísmo",c:"Portugal",v:"38.65,-27.22"},
+  // ESPANHA
+  {n:"Madrid",c:"Espanha",v:"40.42,-3.70"},{n:"Barcelona",c:"Espanha",v:"41.39,2.15"},
+  {n:"Sevilha",c:"Espanha",v:"37.39,-5.99"},{n:"Valência",c:"Espanha",v:"39.47,-0.38"},
+  {n:"Bilbao",c:"Espanha",v:"43.26,-2.93"},{n:"Granada",c:"Espanha",v:"37.18,-3.60"},
+  {n:"Málaga",c:"Espanha",v:"36.72,-4.42"},{n:"Zaragoza",c:"Espanha",v:"41.65,-0.88"},
+  {n:"Alicante",c:"Espanha",v:"38.35,-0.48"},{n:"Valladolid",c:"Espanha",v:"41.65,-4.72"},
+  {n:"Las Palmas — Gran Canária",c:"Espanha",v:"28.13,-15.44"},{n:"Santa Cruz de Tenerife",c:"Espanha",v:"28.46,-16.25"},
+  {n:"Palma — Mallorca",c:"Espanha",v:"39.57,2.65"},{n:"San Sebastián",c:"Espanha",v:"43.32,-1.98"},
+  // FRANÇA
+  {n:"Paris",c:"França",v:"48.85,2.35"},{n:"Marselha",c:"França",v:"43.30,5.37"},
+  {n:"Lyon",c:"França",v:"45.75,4.85"},{n:"Toulouse",c:"França",v:"43.60,1.44"},
+  {n:"Nantes",c:"França",v:"47.22,-1.55"},{n:"Bordeaux",c:"França",v:"44.84,-0.58"},
+  {n:"Nice",c:"França",v:"43.70,7.27"},{n:"Lille",c:"França",v:"50.63,3.06"},
+  {n:"Estrasburgo",c:"França",v:"48.58,7.75"},{n:"Montpellier",c:"França",v:"43.61,3.88"},
+  {n:"Saint-Denis — Reunião",c:"França",v:"-20.88,55.45"},
+  // REINO UNIDO
+  {n:"Londres",c:"Reino Unido",v:"51.51,-0.13"},{n:"Manchester",c:"Reino Unido",v:"53.48,-2.24"},
+  {n:"Birmingham",c:"Reino Unido",v:"52.48,-1.90"},{n:"Glasgow",c:"Reino Unido",v:"55.86,-4.25"},
+  {n:"Edimburgo",c:"Reino Unido",v:"55.95,-3.19"},{n:"Leeds",c:"Reino Unido",v:"53.80,-1.55"},
+  {n:"Bristol",c:"Reino Unido",v:"51.45,-2.59"},{n:"Liverpool",c:"Reino Unido",v:"53.41,-2.98"},
+  {n:"Belfast",c:"Reino Unido",v:"54.60,-5.93"},{n:"Cardiff",c:"Reino Unido",v:"51.48,-3.18"},
+  {n:"Sheffield",c:"Reino Unido",v:"53.38,-1.47"},{n:"Nottingham",c:"Reino Unido",v:"52.95,-1.15"},
+  // ITÁLIA
+  {n:"Roma",c:"Itália",v:"41.90,12.50"},{n:"Milão",c:"Itália",v:"45.46,9.19"},
+  {n:"Nápoles",c:"Itália",v:"40.85,14.27"},{n:"Veneza",c:"Itália",v:"45.44,12.32"},
+  {n:"Florença",c:"Itália",v:"43.77,11.25"},{n:"Turim",c:"Itália",v:"45.07,7.69"},
+  {n:"Bolonha",c:"Itália",v:"44.50,11.34"},{n:"Catânia",c:"Itália",v:"37.81,15.09"},
+  {n:"Palermo",c:"Itália",v:"38.12,13.36"},{n:"Bari",c:"Itália",v:"41.11,16.87"},
+  {n:"Gênova",c:"Itália",v:"44.41,8.93"},{n:"Verona",c:"Itália",v:"45.44,10.99"},
+  // ALEMANHA
+  {n:"Berlim",c:"Alemanha",v:"52.52,13.41"},{n:"Munique",c:"Alemanha",v:"48.14,11.58"},
+  {n:"Hamburgo",c:"Alemanha",v:"53.55,10.00"},{n:"Colônia",c:"Alemanha",v:"50.94,6.96"},
+  {n:"Frankfurt",c:"Alemanha",v:"50.11,8.68"},{n:"Stuttgart",c:"Alemanha",v:"48.78,9.18"},
+  {n:"Düsseldorf",c:"Alemanha",v:"51.23,6.79"},{n:"Dortmund",c:"Alemanha",v:"51.51,7.46"},
+  {n:"Essen",c:"Alemanha",v:"51.46,7.01"},{n:"Leipzig",c:"Alemanha",v:"51.34,12.37"},
+  {n:"Bremen",c:"Alemanha",v:"53.08,8.80"},{n:"Hannover",c:"Alemanha",v:"52.37,9.72"},
+  {n:"Nuremberga",c:"Alemanha",v:"49.45,11.08"},{n:"Dresden",c:"Alemanha",v:"51.05,13.74"},
+  // EUA
+  {n:"Nova York, NY",c:"EUA",v:"40.71,-74.01"},{n:"Los Angeles, CA",c:"EUA",v:"34.05,-118.24"},
+  {n:"Chicago, IL",c:"EUA",v:"41.85,-87.65"},{n:"Houston, TX",c:"EUA",v:"29.76,-95.37"},
+  {n:"Phoenix, AZ",c:"EUA",v:"33.45,-112.07"},{n:"Filadélfia, PA",c:"EUA",v:"39.95,-75.17"},
+  {n:"San Antonio, TX",c:"EUA",v:"29.42,-98.49"},{n:"San Diego, CA",c:"EUA",v:"32.72,-117.15"},
+  {n:"Dallas, TX",c:"EUA",v:"32.79,-96.80"},{n:"San Francisco, CA",c:"EUA",v:"37.77,-122.42"},
+  {n:"Austin, TX",c:"EUA",v:"30.27,-97.74"},{n:"Seattle, WA",c:"EUA",v:"47.61,-122.33"},
+  {n:"Miami, FL",c:"EUA",v:"25.77,-80.19"},{n:"Orlando, FL",c:"EUA",v:"28.54,-81.38"},
+  {n:"Tampa, FL",c:"EUA",v:"27.94,-82.46"},{n:"Boston, MA",c:"EUA",v:"42.36,-71.06"},
+  {n:"Denver, CO",c:"EUA",v:"39.74,-104.98"},{n:"Washington DC",c:"EUA",v:"38.89,-77.03"},
+  {n:"Atlanta, GA",c:"EUA",v:"33.75,-84.39"},{n:"Minneapolis, MN",c:"EUA",v:"44.98,-93.27"},
+  {n:"Las Vegas, NV",c:"EUA",v:"36.17,-115.14"},{n:"Nashville, TN",c:"EUA",v:"36.17,-86.78"},
+  {n:"Portland, OR",c:"EUA",v:"45.52,-122.68"},{n:"Charlotte, NC",c:"EUA",v:"35.23,-80.84"},
+  {n:"Columbus, OH",c:"EUA",v:"39.96,-82.99"},{n:"Nova Orleans, LA",c:"EUA",v:"29.95,-90.07"},
+  {n:"Memphis, TN",c:"EUA",v:"35.15,-90.05"},{n:"Honolulu, HI",c:"EUA",v:"21.31,-157.86"},
+  {n:"Anchorage, AK",c:"EUA",v:"61.22,-149.90"},{n:"San José, CA",c:"EUA",v:"37.34,-121.89"},
+  {n:"Detroit, MI",c:"EUA",v:"42.33,-83.05"},{n:"El Paso, TX",c:"EUA",v:"31.76,-106.49"},
+  {n:"Baltimore, MD",c:"EUA",v:"39.29,-76.61"},{n:"Louisville, KY",c:"EUA",v:"38.25,-85.76"},
+  {n:"Milwaukee, WI",c:"EUA",v:"43.04,-87.91"},{n:"Albuquerque, NM",c:"EUA",v:"35.08,-106.65"},
+  {n:"Tucson, AZ",c:"EUA",v:"32.22,-110.97"},{n:"Fresno, CA",c:"EUA",v:"36.74,-119.79"},
+  {n:"Sacramento, CA",c:"EUA",v:"38.58,-121.49"},{n:"Kansas City, MO",c:"EUA",v:"39.10,-94.58"},
+  {n:"Mesa, AZ",c:"EUA",v:"33.42,-111.82"},{n:"Raleigh, NC",c:"EUA",v:"35.78,-78.64"},
+  {n:"Omaha, NE",c:"EUA",v:"41.26,-95.94"},{n:"Cleveland, OH",c:"EUA",v:"41.50,-81.69"},
+  {n:"Virginia Beach, VA",c:"EUA",v:"36.85,-75.98"},{n:"Pittsburgh, PA",c:"EUA",v:"40.44,-79.99"},
+  {n:"Indianapolis, IN",c:"EUA",v:"39.77,-86.16"},{n:"Cincinnati, OH",c:"EUA",v:"39.10,-84.51"},
+  {n:"St. Louis, MO",c:"EUA",v:"38.63,-90.20"},{n:"Salt Lake City, UT",c:"EUA",v:"40.76,-111.89"},
+  // CANADÁ
+  {n:"Toronto, ON",c:"Canadá",v:"43.70,-79.42"},{n:"Montreal, QC",c:"Canadá",v:"45.50,-73.57"},
+  {n:"Vancouver, BC",c:"Canadá",v:"49.25,-123.12"},{n:"Calgary, AB",c:"Canadá",v:"51.05,-114.08"},
+  {n:"Edmonton, AB",c:"Canadá",v:"53.55,-113.49"},{n:"Ottawa, ON",c:"Canadá",v:"45.42,-75.70"},
+  {n:"Québec City, QC",c:"Canadá",v:"46.81,-71.21"},{n:"Winnipeg, MB",c:"Canadá",v:"49.90,-97.14"},
+  {n:"Hamilton, ON",c:"Canadá",v:"43.25,-79.87"},{n:"Halifax, NS",c:"Canadá",v:"44.65,-63.60"},
+  {n:"Victoria, BC",c:"Canadá",v:"48.43,-123.37"},
+  // MÉXICO
+  {n:"Cidade do México",c:"México",v:"19.43,-99.13"},{n:"Guadalajara",c:"México",v:"20.66,-103.35"},
+  {n:"Monterrey",c:"México",v:"25.68,-100.32"},{n:"Puebla",c:"México",v:"19.05,-98.20"},
+  {n:"Tijuana",c:"México",v:"32.50,-116.96"},{n:"León",c:"México",v:"21.12,-101.68"},
+  {n:"Juárez",c:"México",v:"31.69,-106.42"},{n:"Mérida",c:"México",v:"20.97,-89.62"},
+  {n:"Cancún",c:"México",v:"21.17,-86.83"},{n:"Acapulco",c:"México",v:"16.86,-99.88"},
+  {n:"Oaxaca",c:"México",v:"17.07,-96.72"},{n:"San Luis Potosí",c:"México",v:"22.15,-100.98"},
+  {n:"Hermosillo",c:"México",v:"29.07,-110.96"},{n:"Querétaro",c:"México",v:"20.59,-100.39"},
+  {n:"Veracruz",c:"México",v:"19.18,-96.15"},{n:"Chihuahua",c:"México",v:"28.63,-106.07"},
+  // ARGENTINA
+  {n:"Buenos Aires",c:"Argentina",v:"-34.60,-58.38"},{n:"Córdoba",c:"Argentina",v:"-31.42,-64.18"},
+  {n:"Rosário",c:"Argentina",v:"-32.95,-60.67"},{n:"Mar del Plata",c:"Argentina",v:"-38.00,-57.56"},
+  {n:"Mendoza",c:"Argentina",v:"-32.89,-68.84"},{n:"Tucumán",c:"Argentina",v:"-26.83,-65.22"},
+  {n:"Salta",c:"Argentina",v:"-24.78,-65.41"},{n:"Santa Fe",c:"Argentina",v:"-31.62,-60.70"},
+  {n:"San Juan",c:"Argentina",v:"-31.54,-68.54"},{n:"Resistencia",c:"Argentina",v:"-27.46,-58.99"},
+  {n:"Neuquén",c:"Argentina",v:"-38.95,-68.06"},{n:"Corrientes",c:"Argentina",v:"-27.47,-58.83"},
+  {n:"Bahía Blanca",c:"Argentina",v:"-38.72,-62.27"},{n:"Ushuaia",c:"Argentina",v:"-54.80,-68.30"},
+  // CHILE
+  {n:"Santiago",c:"Chile",v:"-33.46,-70.65"},{n:"Valparaíso",c:"Chile",v:"-33.04,-71.62"},
+  {n:"Concepción",c:"Chile",v:"-36.82,-73.05"},{n:"Antofagasta",c:"Chile",v:"-23.65,-70.40"},
+  {n:"Temuco",c:"Chile",v:"-38.74,-72.60"},{n:"Rancagua",c:"Chile",v:"-34.17,-70.74"},
+  {n:"Iquique",c:"Chile",v:"-20.21,-70.15"},{n:"Arica",c:"Chile",v:"-18.48,-70.31"},
+  {n:"Punta Arenas",c:"Chile",v:"-53.16,-70.91"},{n:"Puerto Montt",c:"Chile",v:"-41.47,-72.94"},
+  // COLÔMBIA
+  {n:"Bogotá",c:"Colômbia",v:"4.71,-74.07"},{n:"Medellín",c:"Colômbia",v:"6.23,-75.59"},
+  {n:"Cali",c:"Colômbia",v:"3.43,-76.52"},{n:"Cartagena",c:"Colômbia",v:"10.40,-75.51"},
+  {n:"Barranquilla",c:"Colômbia",v:"10.96,-74.80"},{n:"Bucaramanga",c:"Colômbia",v:"7.12,-73.12"},
+  {n:"Santa Marta",c:"Colômbia",v:"11.24,-74.20"},{n:"Pereira",c:"Colômbia",v:"4.81,-75.69"},
+  // VENEZUELA
+  {n:"Caracas",c:"Venezuela",v:"10.48,-66.88"},{n:"Maracaibo",c:"Venezuela",v:"10.65,-71.64"},
+  {n:"Valencia",c:"Venezuela",v:"10.16,-67.99"},{n:"Barquisimeto",c:"Venezuela",v:"10.07,-69.31"},
+  {n:"Maracay",c:"Venezuela",v:"10.24,-67.59"},
+  // PERU
+  {n:"Lima",c:"Peru",v:"-12.05,-77.04"},{n:"Cusco",c:"Peru",v:"-13.52,-71.98"},
+  {n:"Arequipa",c:"Peru",v:"-16.40,-71.54"},{n:"Trujillo",c:"Peru",v:"-8.11,-79.02"},
+  {n:"Iquitos",c:"Peru",v:"-3.75,-73.25"},{n:"Piura",c:"Peru",v:"-5.19,-80.63"},
+  // EQUADOR, BOLÍVIA, URUGUAI, PARAGUAI
+  {n:"Quito",c:"Equador",v:"-0.22,-78.51"},{n:"Guayaquil",c:"Equador",v:"-2.19,-79.89"},
+  {n:"Cuenca",c:"Equador",v:"-2.90,-79.00"},{n:"La Paz",c:"Bolívia",v:"-16.50,-68.15"},
+  {n:"Santa Cruz de la Sierra",c:"Bolívia",v:"-17.78,-63.18"},{n:"Cochabamba",c:"Bolívia",v:"-17.39,-66.16"},
+  {n:"Montevidéu",c:"Uruguai",v:"-34.90,-56.19"},{n:"Paysandú",c:"Uruguai",v:"-32.32,-58.08"},
+  {n:"Assunção",c:"Paraguai",v:"-25.29,-57.65"},{n:"Ciudad del Este",c:"Paraguai",v:"-25.51,-54.61"},
+  // CARIBE E AMÉRICA CENTRAL
+  {n:"Havana",c:"Cuba",v:"23.13,-82.38"},{n:"Santo Domingo",c:"Rep. Dominicana",v:"18.47,-69.91"},
+  {n:"San José",c:"Costa Rica",v:"9.93,-84.08"},{n:"Cidade da Guatemala",c:"Guatemala",v:"14.64,-90.51"},
+  {n:"Cidade do Panamá",c:"Panamá",v:"8.99,-79.52"},{n:"Kingston",c:"Jamaica",v:"17.99,-76.79"},
+  {n:"San Salvador",c:"El Salvador",v:"13.69,-89.19"},{n:"Tegucigalpa",c:"Honduras",v:"14.09,-87.21"},
+  {n:"Manágua",c:"Nicarágua",v:"12.13,-86.28"},{n:"Porto Príncipe",c:"Haiti",v:"18.54,-72.34"},
+  {n:"Nassau",c:"Bahamas",v:"25.04,-77.35"},{n:"Bridgetown",c:"Barbados",v:"13.10,-59.62"},
+  {n:"Porto de Espanha",c:"Trinidad e Tobago",v:"10.65,-61.52"},
+  // JAPÃO
+  {n:"Tóquio",c:"Japão",v:"35.69,139.69"},{n:"Osaka",c:"Japão",v:"34.69,135.50"},
+  {n:"Nagoya",c:"Japão",v:"35.18,136.91"},{n:"Sapporo",c:"Japão",v:"43.06,141.35"},
+  {n:"Fukuoka",c:"Japão",v:"33.59,130.40"},{n:"Kobe",c:"Japão",v:"34.69,135.20"},
+  {n:"Kyoto",c:"Japão",v:"35.01,135.77"},{n:"Hiroshima",c:"Japão",v:"34.39,132.46"},
+  {n:"Yokohama",c:"Japão",v:"35.44,139.64"},{n:"Sendai",c:"Japão",v:"38.27,140.87"},
+  // CHINA
+  {n:"Pequim",c:"China",v:"39.91,116.39"},{n:"Xangai",c:"China",v:"31.23,121.47"},
+  {n:"Guangzhou",c:"China",v:"23.13,113.26"},{n:"Shenzhen",c:"China",v:"22.54,114.06"},
+  {n:"Chengdu",c:"China",v:"30.57,104.07"},{n:"Chongqing",c:"China",v:"29.56,106.55"},
+  {n:"Tianjin",c:"China",v:"39.14,117.18"},{n:"Xian",c:"China",v:"34.27,108.93"},
+  {n:"Wuhan",c:"China",v:"30.58,114.27"},{n:"Hangzhou",c:"China",v:"30.29,120.16"},
+  // ÍNDIA
+  {n:"Nova Delhi",c:"Índia",v:"28.66,77.22"},{n:"Mumbai",c:"Índia",v:"19.08,72.88"},
+  {n:"Bangalore",c:"Índia",v:"12.97,77.59"},{n:"Calcutá",c:"Índia",v:"22.57,88.36"},
+  {n:"Hyderabad",c:"Índia",v:"17.38,78.49"},{n:"Chennai",c:"Índia",v:"13.08,80.27"},
+  {n:"Pune",c:"Índia",v:"18.52,73.86"},{n:"Ahmedabad",c:"Índia",v:"23.03,72.58"},
+  {n:"Jaipur",c:"Índia",v:"26.91,75.79"},{n:"Surat",c:"Índia",v:"21.19,72.83"},
+  {n:"Lucknow",c:"Índia",v:"26.84,80.91"},{n:"Kanpur",c:"Índia",v:"26.46,80.33"},
+  {n:"Nagpur",c:"Índia",v:"21.15,79.08"},{n:"Patna",c:"Índia",v:"25.59,85.14"},
+  // COREIA DO SUL
+  {n:"Seul",c:"Coreia do Sul",v:"37.57,126.98"},{n:"Busan",c:"Coreia do Sul",v:"35.10,129.04"},
+  {n:"Incheon",c:"Coreia do Sul",v:"37.46,126.71"},{n:"Daegu",c:"Coreia do Sul",v:"35.87,128.60"},
+  // RÚSSIA
+  {n:"Moscou",c:"Rússia",v:"55.75,37.62"},{n:"São Petersburgo",c:"Rússia",v:"59.95,30.32"},
+  {n:"Ecaterimburgo",c:"Rússia",v:"56.85,60.61"},{n:"Novosibirsk",c:"Rússia",v:"54.99,82.90"},
+  {n:"Kazan",c:"Rússia",v:"55.80,49.11"},{n:"Vladivostok",c:"Rússia",v:"43.12,131.89"},
+  {n:"Sochi",c:"Rússia",v:"43.60,39.72"},
+  // AUSTRÁLIA
+  {n:"Sydney",c:"Austrália",v:"-33.87,151.21"},{n:"Melbourne",c:"Austrália",v:"-37.81,144.96"},
+  {n:"Brisbane",c:"Austrália",v:"-27.47,153.02"},{n:"Perth",c:"Austrália",v:"-31.95,115.86"},
+  {n:"Adelaide",c:"Austrália",v:"-34.93,138.60"},{n:"Gold Coast",c:"Austrália",v:"-28.00,153.43"},
+  {n:"Camberra",c:"Austrália",v:"-35.28,149.13"},{n:"Darwin",c:"Austrália",v:"-12.46,130.84"},
+  {n:"Hobart",c:"Austrália",v:"-42.88,147.33"},
+  // NOVA ZELÂNDIA
+  {n:"Auckland",c:"Nova Zelândia",v:"-36.86,174.77"},{n:"Wellington",c:"Nova Zelândia",v:"-41.29,174.78"},
+  {n:"Christchurch",c:"Nova Zelândia",v:"-43.53,172.64"},{n:"Hamilton",c:"Nova Zelândia",v:"-37.79,175.28"},
+  // AFRICA DO SUL
+  {n:"Joanesburgo",c:"África do Sul",v:"-26.20,28.04"},{n:"Cidade do Cabo",c:"África do Sul",v:"-33.93,18.42"},
+  {n:"Durban",c:"África do Sul",v:"-29.86,31.03"},{n:"Pretória",c:"África do Sul",v:"-25.75,28.19"},
+  // AFRICA (OUTROS)
+  {n:"Cairo",c:"Egito",v:"30.06,31.25"},{n:"Alexandria",c:"Egito",v:"31.20,29.92"},
+  {n:"Lagos",c:"Nigéria",v:"6.45,3.40"},{n:"Abuja",c:"Nigéria",v:"9.07,7.40"},
+  {n:"Nairóbi",c:"Quênia",v:"-1.29,36.82"},{n:"Acra",c:"Gana",v:"5.56,-0.20"},
+  {n:"Casablanca",c:"Marrocos",v:"33.59,-7.62"},{n:"Marrakech",c:"Marrocos",v:"31.63,-7.99"},
+  {n:"Dacar",c:"Senegal",v:"14.71,-17.47"},{n:"Abidjan",c:"Costa do Marfim",v:"5.35,-4.00"},
+  {n:"Luanda",c:"Angola",v:"-8.84,13.23"},{n:"Maputo",c:"Moçambique",v:"-25.97,32.59"},
+  {n:"Harare",c:"Zimbábue",v:"-17.74,31.05"},{n:"Dar es Salaam",c:"Tanzânia",v:"-6.79,39.21"},
+  {n:"Adis Abeba",c:"Etiópia",v:"9.03,38.74"},{n:"Cartum",c:"Sudão",v:"15.58,32.53"},
+  {n:"Antananarivo",c:"Madagascar",v:"-18.92,47.54"},{n:"Túnis",c:"Tunísia",v:"36.82,10.17"},
+  {n:"Argel",c:"Argélia",v:"36.74,3.06"},{n:"Trípoli",c:"Líbia",v:"32.90,13.18"},
+  // ORIENTE MÉDIO
+  {n:"Dubai",c:"Emirados Árabes",v:"25.20,55.27"},{n:"Abu Dhabi",c:"Emirados Árabes",v:"24.47,54.37"},
+  {n:"Riade",c:"Arábia Saudita",v:"24.69,46.72"},{n:"Meca",c:"Arábia Saudita",v:"21.39,39.86"},
+  {n:"Jeddah",c:"Arábia Saudita",v:"21.49,39.19"},{n:"Istambul",c:"Turquia",v:"41.01,28.95"},
+  {n:"Ancara",c:"Turquia",v:"39.93,32.86"},{n:"Bagdá",c:"Iraque",v:"33.34,44.40"},
+  {n:"Teerã",c:"Irã",v:"35.70,51.42"},{n:"Damasco",c:"Síria",v:"33.51,36.29"},
+  {n:"Beirute",c:"Líbano",v:"33.89,35.50"},{n:"Amã",c:"Jordânia",v:"31.95,35.93"},
+  {n:"Tel Aviv",c:"Israel",v:"32.07,34.78"},{n:"Jerusalém",c:"Israel",v:"31.77,35.22"},
+  {n:"Doha",c:"Catar",v:"25.29,51.53"},{n:"Kuwait City",c:"Kuwait",v:"29.37,47.97"},
+  {n:"Mascate",c:"Omã",v:"23.59,58.59"},
+  // SUDESTE ASIÁTICO
+  {n:"Jacarta",c:"Indonésia",v:"-6.21,106.85"},{n:"Denpasar — Bali",c:"Indonésia",v:"-8.34,115.09"},
+  {n:"Surabaya",c:"Indonésia",v:"-7.25,112.75"},{n:"Bandung",c:"Indonésia",v:"-6.91,107.61"},
+  {n:"Bangcoc",c:"Tailândia",v:"13.75,100.52"},{n:"Chiang Mai",c:"Tailândia",v:"18.79,98.98"},
+  {n:"Phuket",c:"Tailândia",v:"7.89,98.40"},{n:"Hanói",c:"Vietnã",v:"21.03,105.85"},
+  {n:"Ho Chi Minh",c:"Vietnã",v:"10.82,106.63"},{n:"Danang",c:"Vietnã",v:"16.07,108.22"},
+  {n:"Singapura",c:"Singapura",v:"1.35,103.82"},{n:"Kuala Lumpur",c:"Malásia",v:"3.15,101.69"},
+  {n:"Penang",c:"Malásia",v:"5.41,100.33"},{n:"Manila",c:"Filipinas",v:"14.60,120.98"},
+  {n:"Cebu",c:"Filipinas",v:"10.32,123.90"},{n:"Phnom Penh",c:"Camboja",v:"11.56,104.92"},
+  {n:"Yangon",c:"Myanmar",v:"16.87,96.19"},{n:"Vientiane",c:"Laos",v:"17.97,102.60"},
+  // EUROPA (OUTROS)
+  {n:"Amsterdã",c:"Países Baixos",v:"52.37,4.90"},{n:"Roterdã",c:"Países Baixos",v:"51.92,4.48"},
+  {n:"Bruxelas",c:"Bélgica",v:"50.85,4.35"},{n:"Viena",c:"Áustria",v:"48.21,16.37"},
+  {n:"Salzburgo",c:"Áustria",v:"47.80,13.04"},{n:"Zurique",c:"Suíça",v:"47.38,8.54"},
+  {n:"Genebra",c:"Suíça",v:"46.20,6.14"},{n:"Atenas",c:"Grécia",v:"37.98,23.73"},
+  {n:"Thessaloniki",c:"Grécia",v:"40.64,22.94"},{n:"Varsóvia",c:"Polônia",v:"52.23,21.01"},
+  {n:"Cracóvia",c:"Polônia",v:"50.06,19.94"},{n:"Estocolmo",c:"Suécia",v:"59.33,18.07"},
+  {n:"Gotemburgo",c:"Suécia",v:"57.71,11.97"},{n:"Oslo",c:"Noruega",v:"59.91,10.75"},
+  {n:"Copenhague",c:"Dinamarca",v:"55.68,12.57"},{n:"Helsinque",c:"Finlândia",v:"60.17,24.94"},
+  {n:"Dublin",c:"Irlanda",v:"53.33,-6.25"},{n:"Reykjavik",c:"Islândia",v:"64.14,-21.94"},
+  {n:"Praga",c:"Rep. Tcheca",v:"50.08,14.42"},{n:"Bratislava",c:"Eslováquia",v:"48.15,17.11"},
+  {n:"Budapeste",c:"Hungria",v:"47.50,19.04"},{n:"Bucareste",c:"Romênia",v:"44.43,26.10"},
+  {n:"Sófia",c:"Bulgária",v:"42.70,23.32"},{n:"Belgrado",c:"Sérvia",v:"44.80,20.46"},
+  {n:"Zagreb",c:"Croácia",v:"45.81,15.98"},{n:"Dubrovnik",c:"Croácia",v:"42.65,18.09"},
+  {n:"Ljubljana",c:"Eslovênia",v:"46.05,14.51"},{n:"Kiev",c:"Ucrânia",v:"50.45,30.52"},
+  {n:"Lviv",c:"Ucrânia",v:"49.84,24.03"},{n:"Minsk",c:"Bielorrússia",v:"53.90,27.57"},
+  {n:"Riga",c:"Letônia",v:"56.95,24.11"},{n:"Vilnius",c:"Lituânia",v:"54.69,25.28"},
+  {n:"Tallinn",c:"Estônia",v:"59.44,24.75"},{n:"Lisboa — Cascais",c:"Portugal",v:"38.70,-9.42"},
+  // SUL DA ÁSIA
+  {n:"Islamabad",c:"Paquistão",v:"33.72,73.06"},{n:"Carachi",c:"Paquistão",v:"24.86,67.01"},
+  {n:"Lahore",c:"Paquistão",v:"31.55,74.35"},{n:"Dhaka",c:"Bangladesh",v:"23.72,90.41"},
+  {n:"Colombo",c:"Sri Lanka",v:"6.93,79.85"},{n:"Katmandu",c:"Nepal",v:"27.71,85.31"},
+  {n:"Cabul",c:"Afeganistão",v:"34.52,69.18"},{n:"Tashkent",c:"Uzbequistão",v:"41.30,69.24"},
+];
+
+function filterCities(prefix){
+  const q=(document.getElementById(prefix+'-city-input').value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const drop=document.getElementById(prefix+'-drop');
+  if(!q){drop.innerHTML='';drop.style.display='none';return}
+  const res=CITIES.filter(c=>{
+    const name=c.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const country=c.c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return name.includes(q)||country.includes(q);
+  }).slice(0,10);
+  if(!res.length){drop.innerHTML='<div style="padding:12px 16px;color:var(--dim);font-style:italic;font-size:.85rem">Nenhuma cidade encontrada</div>';drop.style.display='block';return}
+  drop.innerHTML=res.map((c,i)=>`<div onclick="selectCity('${prefix}','${c.v}','${c.n}','${c.c}')" style="padding:12px 16px;cursor:pointer;border-bottom:1px solid rgba(200,169,110,.08);transition:background .2s;font-family:'Cormorant Garamond',serif" onmouseover="this.style.background='rgba(200,169,110,.08)'" onmouseout="this.style.background='none'"><span style="color:var(--text)">${c.n}</span> <span style="color:var(--dim);font-size:.85rem">— ${c.c}</span></div>`).join('');
+  drop.style.display='block';
+}
+
+function selectCity(prefix,val,name,country){
+  document.getElementById(prefix+'-country').value=val;
+  document.getElementById(prefix+'-city-input').value=name;
+  document.getElementById(prefix+'-city-label').textContent='✦ '+name+' — '+country;
+  document.getElementById(prefix+'-drop').style.display='none';
+}
+
+function showDrop(prefix){filterCities(prefix)}
+function hideDrop(prefix){document.getElementById(prefix+'-drop').style.display='none'}
+// PLANET MODAL
+// ============================================================
+function openPlanetModal(pi){
+  const p=C.planets[pi];const h=getHouseOf(pi,C);const dig=getDignity(pi,p.sign);
+  document.getElementById('modal-title').textContent=`${PLANET_SYMS[pi]} ${PLANET_NAMES[pi]} em ${SIGNS[p.sign]}`;
+  document.getElementById('modal-sub').textContent=`${p.deg}° ${p.min}' ${SIGNS[p.sign]} · Casa ${h}`;
+  let badges=`<span class="modal-badge">Casa ${h}</span>`;
+  if(C.retro[pi])badges+=`<span class="modal-badge" style="border-color:var(--rose);color:var(--rose)">Retrógrado ℞</span>`;
+  if(dig)badges+=`<span class="modal-badge" style="border-color:var(--teal);color:var(--teal)">${dig}</span>`;
+  document.getElementById('modal-badges').innerHTML=badges;
+  document.getElementById('modal-text').innerHTML=`<p style="margin-bottom:12px;color:var(--dim);font-size:.85rem">${PLANET_DESC[pi]}</p><p>${interpPlanet(pi,C)}</p>`;
+  document.getElementById('planet-modal').classList.add('open');
+}
+
+function closePlanetModal(e){
+  if(!e||e.target===document.getElementById('planet-modal'))document.getElementById('planet-modal').classList.remove('open');
+}
+
+// ============================================================
+// EXTRAS
+// ============================================================
+function speakChart(){
+  if('speechSynthesis' in window){
+    const text=`Seu mapa astral, ${C.name}. Sol em ${SIGNS[C.sun.sign]}. Lua em ${SIGNS[C.moon.sign]}. Ascendente em ${SIGNS[C.asc.sign]}. Nodo Norte em ${SIGNS[C.northNode.sign]}. Quíron em ${SIGNS[C.chiron.sign]}.`;
+    const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';speechSynthesis.speak(u);showToast('Narrando seu mapa ✦');
+  }else{showToast('Voz não disponível neste navegador')}
+}
+
+function savePNG(){
+  const mc=document.getElementById('mc');
+  const link=document.createElement('a');link.download=`mapa-${C.name}.png`;link.href=mc.toDataURL();link.click();showToast('Mandala salva ✦');
+}
+
+function shareMap(){
+  const text=`✦ Meu Mapa Astral\n☉ Sol em ${SIGNS[C.sun.sign]}\n☽ Lua em ${SIGNS[C.moon.sign]}\nAsc ${SIGNS[C.asc.sign]}\n\nDescubra o seu em StarsGuide ✨`;
+  if(navigator.share){navigator.share({title:'Meu Mapa Astral',text:text})}
+  else{navigator.clipboard.writeText(text).then(()=>showToast('Copiado ✦')).catch(()=>showToast('Não foi possível copiar'))}
+}
+
+function resetApp(){
+  if(confirm('Deseja calcular um novo mapa?')){localStorage.removeItem('starsguide_chart');location.reload()}}
+
+function showLunarTimer(){
+  const area=document.getElementById('extras-extra');
+  const now=new Date();const J=jd(now.getFullYear(),now.getMonth()+1,now.getDate(),now.getHours());
+  const age=((J-2451550.1)%29.53+29.53)%29.53|0;
+  const rituals=[{phase:'🌑 Lua Nova',ritual:'Escreva suas intenções. Acenda uma vela branca. Medite em silêncio sobre o que deseja manifestar.'},{phase:'🌓 Quarto Crescente',ritual:'Tome ação em direção aos seus objetivos. Quebre padrões limitantes. Ouse dar o próximo passo.'},{phase:'🌕 Lua Cheia',ritual:'Celebre suas conquistas. Faça uma lista de gratidão. Banho de sal grosso para liberar energias densas.'},{phase:'🌗 Quarto Minguante',ritual:'Libere o que não serve mais. Perdoe a si e aos outros. Simplifique sua vida.'}];
+  area.innerHTML=`<div class="sect-hdr"><span>Rituais Lunares</span></div>
+  <div style="display:grid;gap:12px">${rituals.map(r=>`<div class="card"><div class="card-title">${r.phase}</div><div class="card-text">${r.ritual}</div></div>`).join('')}</div>`;
+}
+
+function showKarmicTimeline(){
+  const area=document.getElementById('extras-extra');
+  const nn=SIGNS[C.northNode.sign],ns=SIGNS[(C.northNode.sign+6)%12];
+  const lives=[{era:'Civilização Antiga',desc:`Em ${ns}, você viveu como ${SIGN_DESC[(C.northNode.sign+6)%12].toLowerCase()}. Uma alma que dominou esse campo, mas que agora busca transcendê-lo.`},{era:'Vida Medieval',desc:'Você carregou papéis de liderança ou servidão, desenvolvendo compaixão através do sofrimento coletivo.'},{era:'Vida Recente',desc:`Próximo ao seu Nodo Sul em ${ns}, você aperfeiçoou dons que agora são naturais — mas também hábitos que precisam ser liberados.`},{era:'Entre Vidas',desc:'Sua alma escolheu este mapa conscientemente, sabendo exatamente que desafios precisava para evoluir.'},{era:'Esta Vida',desc:`Em direção ao Nodo Norte em ${nn}, sua alma caminha para ${SIGN_DESC[C.northNode.sign].toLowerCase()}. Este é o horizonte da sua evolução.`}];
+  area.innerHTML=`<div class="sect-hdr"><span>Linha do Tempo Kármica</span></div>
+  <div class="karma-timeline">${lives.map(l=>`<div class="karma-step"><h4>${l.era}</h4><p>${l.desc}</p></div>`).join('')}</div>`;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ============================================================
+// LOAD SAVED
+// ============================================================
+(function(){
+  try{
+    const saved=localStorage.getItem('starsguide_chart');
+    if(saved){
+      const s=JSON.parse(saved);
+      document.getElementById('ob-name').value=s.name||'';
+      document.getElementById('ob-date').value=s.date||'';
+      document.getElementById('ob-time').value=s.time||'';
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
